@@ -65,3 +65,5 @@
 8. Missing Attribute Values: None
 
 9. Class Distribution: Given above
+
+Target is to predict the Type [1-7] correctly.
