@@ -67,3 +67,7 @@
 9. Class Distribution: Given above
 
 Target is to predict the Type [1-7] correctly.
+All Boolean except:-
+Animal Name (Unique for each instance, same category as Date)
+Legs (Numbers from {0,2,4,5,6,8})
+Type (Numbers from {1,2,3,4,5,6,7})

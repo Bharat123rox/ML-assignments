@@ -1,4 +1,4 @@
-Animal Name(Unique),Hair(bool),Feathers(Bool),Eggs(Bool),Milk(Bool),Airborne(Bool),Aquatic(Bool),Predator(Bool),Toothed(Bool),Backbone(Bool),Breathes(Bool),Venomous(Bool),Fins(Bool),Legs(Num{0,2,4,5,6,8}),Tail(Bool),Domestic(Bool),Catsize(Bool),Type(Num{1,2,3,4,5,6,7})
+Name,Hair,Feathers,Eggs,Milk,Airborne,Aquatic,Predator,Toothed,Backbone,Breathes,Venomous,Fins,Legs,Tail,Domestic,Catsize,Type
 aardvark,1,0,0,1,0,0,1,1,1,1,0,0,4,0,0,1,1
 antelope,1,0,0,1,0,0,0,1,1,1,0,0,4,1,0,1,1
 bass,0,0,1,0,0,1,1,1,1,0,0,1,0,1,0,0,4
