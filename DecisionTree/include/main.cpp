@@ -14,7 +14,7 @@ int main()
 	root->setData(tree.tdata);
 	while(it!=tree.cvals.end())
 	{
-		cout<<*it<<endl;
+		cout<<*it<<" ";
 		cout<<tree.splitContinuous(root,*it)<<endl;
 		it++;
 	}

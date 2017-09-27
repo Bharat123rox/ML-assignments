@@ -195,10 +195,10 @@ int Tree::splitContinuous(Treenode* node,int ano)
 	pair<int,bool> temp;
 	int tpos=0;
 	int tneg=0;
-	cout<<"Idhar"<<endl;
+	//cout<<"Idhar"<<endl;
 	for(i=0;i<size;i++)
 	{
-		cout<<i<<endl;
+		//cout<<i<<endl;
 		temp.first = stringToInt(node->data[i].key[ano]);
 		temp.second = node->data[i].val;
 		if(temp.second==false)
@@ -211,7 +211,7 @@ int Tree::splitContinuous(Treenode* node,int ano)
 		}
 		arr.push_back(temp);
 	}
-	cout<<"IDhar"<<endl;
+	//	cout<<"IDhar"<<endl;
 	sort(arr.begin(),arr.end(),compare);
 	int lpos=0;
 	int lneg=0;
@@ -241,7 +241,7 @@ int Tree::splitContinuous(Treenode* node,int ano)
 			if(ig>igmax)
 			{
 				igmax = ig;
-				mval = i;
+				mval = (arr[i].first+arr[i-1].first)/2;
 			}
 		}
 		if(arr[i].second==false)

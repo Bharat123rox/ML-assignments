@@ -22,12 +22,12 @@ class Treenode
 	private:
 		Treenode* parent;
 		int ano;
-		std::vector<Treenode*> children;
 
 	public:
 		Treenode();
 		std::vector< data_ds > data;
 		std::map<int,bool> aset;
+		std::vector<Treenode*> children;
 		std::vector< data_ds > getData();
 		void setData(std::vector< data_ds > data);
 		int getAno();
