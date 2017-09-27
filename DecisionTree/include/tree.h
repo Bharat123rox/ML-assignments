@@ -17,10 +17,15 @@ class Tree
 		void loadTrainingData(std::string datafile,int no_of_atb);
 		void loadDomainKnowledge(std::string datafile);
 		int stringToInt(std::string str);
-		int splitContinuous(Treenode* node,int ano);
+		std::pair<long double,bool> splitContinuous(Treenode* node,int ano);
+		long double splitDiscrete(Treenode* node,int ano);
 		long double getEntropy(int npos,int nneg);
+		std::string intToString(int no);
 		void printData();
 		void printinfo();
+		void setrootNode();
+		void makeTree();
+		Treenode* getrootNode();
 };
 
 #endif

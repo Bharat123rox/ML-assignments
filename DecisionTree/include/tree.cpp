@@ -1,5 +1,7 @@
 #include "tree.h"
 #include <fstream>
+#include <queue>
+#include <iterator>
 #define ll long long int
 using namespace std;
 
@@ -12,6 +14,31 @@ Tree::Tree()
 bool compare(pair<int,bool> p1,pair<int,bool> p2)
 {
 	return p1.first<p2.first;
+}
+
+bool compare2(pair<string,int>p1, pair<string,int> p2)
+{
+	return p1.second<p2.second;
+}
+
+string Tree::intToString(int no)
+{
+	string ans="";
+	while(no>0)
+	{
+		char ch = (char)(no%10)+48;
+		ans.push_back(ch);
+		no = no/10;
+	}
+	int i;
+	int size = ans.length();
+	for(i=0;i<size/2;i++)
+	{
+		char temp = ans[i];
+		ans[i]=ans[size-1-i];
+		ans[size-1-i]=temp;
+	}
+	return ans;
 }
 
 int Tree::stringToInt(string str)
@@ -94,7 +121,6 @@ void Tree::loadDomainKnowledge(string datafile)
 		{
 			cvals.insert(ind);
 		}
-		avals[ind].insert("?");
 		ind++;
 	}
 	this->atbno = ind;
@@ -106,7 +132,8 @@ void Tree::loadDomainKnowledge(string datafile)
 void Tree::loadTrainingData(string datafile,int no_of_atb)
 {
 	ifstream ifil;
-	int i,size;
+	int i,j,size;
+	queue<string> wq;
 	size = datafile.length();
 	char* buff = new char[size+1];
 	for(i=0;i<size;i++)
@@ -116,17 +143,54 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 	buff[i]='\0';
 	ifil.open(buff,fstream::in);
 	string line;
+	vector<ll> pcvals;
+	vector<ll> ncvals;
+	map<int, vector< pair<string,int> > > pdf;
+	map<int, vector< pair<string,int> > > ndf;
+	size = cvals.size();
+	int npos=0;
+	int nneg=0;
+	for(i=0;i<size;i++)
+	{
+		pcvals.push_back(0);
+		ncvals.push_back(0);
+	}
+	for(i=0;i<atbno;i++)
+	{
+		if(cvals.find(i)==cvals.end())
+		{
+			size = avals[i].size();
+			pair<string,int> temp;
+			set<string>::iterator it = avals[i].begin();
+			while(it!=avals[i].end())
+			{
+				pdf[i].push_back(make_pair(*it,0));
+				ndf[i].push_back(make_pair(*it,0));
+				it++;
+			}
+		}
+	}
+	int lno=0;
 	while(!ifil.eof())
 	{
+		lno++;
 		data_ds ds;
 		string temp="";
 		getline(ifil,line);
 		size = line.length();
 		vector<string> vals;
+		bool flag = false;
 		for(i=0;i<size;i++)
 		{
 			if(line[i]==',')
 			{
+				if(temp.compare("?")==0)
+				{
+					wq.push(line);
+					flag=true;
+					temp="";
+					break;
+				}
 				vals.push_back(temp);
 				temp="";
 				i++;
@@ -136,21 +200,162 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 				temp.push_back(line[i]);
 			}
 		}
-		vals.push_back(temp);
-		size = vals.size();
-		ds.key = vals;
-		if(vals[size-1].compare("<=50K")==0)
+		if(!flag)
 		{
-			ds.val=false;
+			vals.push_back(temp);
+			size = vals.size();
+			ds.key = vals;
+			if(vals[size-1].compare("<=50K")==0)
+			{
+				ds.val=false;
+			}
+			else
+			{
+				ds.val=true;
+			}
+			for(i=0;i<size;i++)
+			{
+				if(cvals.find(i)==cvals.end())
+				{
+					string av = vals[i];
+					int lls = avals[i].size();
+					if(ds.val==false)
+					{
+						for(j=0;j<lls;j++)
+						{
+							if(ndf[i][j].first.compare(av)==0)
+							{
+								ndf[i][j].second++;
+								break;
+							}
+						}
+					}
+					else
+					{
+						for(j=0;j<lls;j++)
+						{
+							if(pdf[i][j].first.compare(av)==0)
+							{
+								pdf[i][j].second++;
+								break;
+							}
+						}
+					}
+				}
+				else
+				{
+					int ind = distance(cvals.begin(),cvals.find(i));
+					//cout<<ind<<endl;
+					if(ds.val==false)
+					{
+						ncvals[ind]=ncvals[ind]+stringToInt(vals[i]);
+						nneg++;
+					}
+					else
+					{
+						npos++;
+						pcvals[ind]=pcvals[ind]+stringToInt(vals[i]);
+					}
+				}
+			}
+			tdata.push_back(ds);
 		}
-		else
-		{
-			ds.val=true;
-		}
-		tdata.push_back(ds);
+		//cout<<lno<<endl;
 	}
+	//cout<<"done"<<endl;
 	delete[] buff;
 	ifil.close();
+	size = cvals.size();
+	for(i=0;i<size;i++)
+	{
+		pcvals[i] = floor((pcvals[i]*1.00000/npos)+0.5);
+		ncvals[i] = floor((ncvals[i]*1.00000/nneg)+0.5);
+		//cout<<i<<" "<<pcvals[i]<<" "<<ncvals[i]<<endl;
+	}
+	for(i=0;i<size;i++)
+	{
+		if(cvals.find(i)==cvals.end())
+		{		
+			sort(pdf[i].begin(),pdf[i].end(),compare2);
+			sort(ndf[i].begin(),ndf[i].end(),compare2);
+		}
+	}
+	for(i=0;i<size;i++)
+	{
+		if(cvals.find(i)==cvals.end())
+		{
+			int lls = avals[i].size();
+			for(j=1;j<size;j++)
+			{
+				pdf[i][j].second=pdf[i][j-1].second+pdf[i][j].second;
+				ndf[i][j].second=ndf[i][j-1].second+ndf[i][j].second;	
+			}
+		}
+	}
+	/*while(!wq.empty())
+	{
+		line = wq.front();
+		wq.pop();
+		size = line.length();
+		vector<string> vals;
+		string temp="";
+		for(i=0;i<size;i++)
+		{
+			if(line[i]==',')
+			{
+				j=i+1;
+			}
+		}
+		bool flag = false;
+		while(j<size)
+		{
+			temp.push_back(j);
+			j++;
+		}
+		if(temp.compare(">50K")==0)
+		{
+			flag = true;
+		}
+		temp="";
+		for(i=0;i<size;i++)
+		{
+			if(line[i]==',')
+			{
+				if(temp.compare("?")==0)
+				{
+					if(cvals.find(i)!=cvals.end())
+					{
+						if(flag)
+						{
+							temp=intToString(pcvals[i]);
+						}
+						else
+						{
+							temp=intToString(ncvals[i]);
+						}
+					}
+					else
+					{
+						if(flag)
+						{
+							int lls = 
+						}
+						else
+						{
+
+						}
+					}
+				}
+				vals.push_back(temp);
+				temp="";
+				i++;
+			}
+			else
+			{
+				temp.push_back(line[i]);
+			}
+		}
+	}*/
 }
 
 void Tree::printData()
@@ -187,18 +392,16 @@ void Tree::printinfo()
 	}
 }
 
-int Tree::splitContinuous(Treenode* node,int ano)
+pair<long double,bool> Tree::splitContinuous(Treenode* node,int ano)
 {
 	int i,size;
-	size=tdata.size();
+	size=node->data.size();
 	vector< pair<int,bool> > arr;
 	pair<int,bool> temp;
 	int tpos=0;
 	int tneg=0;
-	//cout<<"Idhar"<<endl;
 	for(i=0;i<size;i++)
 	{
-		//cout<<i<<endl;
 		temp.first = stringToInt(node->data[i].key[ano]);
 		temp.second = node->data[i].val;
 		if(temp.second==false)
@@ -211,11 +414,14 @@ int Tree::splitContinuous(Treenode* node,int ano)
 		}
 		arr.push_back(temp);
 	}
-	//	cout<<"IDhar"<<endl;
 	sort(arr.begin(),arr.end(),compare);
 	int lpos=0;
 	int lneg=0;
-	double tentro = getEntropy(tpos,tneg);
+	long double tentro = getEntropy(tpos,tneg);
+	if(tneg==0 || tpos==0)
+	{
+		return make_pair(tentro,true);
+	}
 	size=arr.size();
 	long double lentro=0;
 	long double igmax=-1;
@@ -253,5 +459,109 @@ int Tree::splitContinuous(Treenode* node,int ano)
 			lpos++;
 		}
 	}
-	return mval;
+	return make_pair(igmax,false);
+}
+
+long double Tree::splitDiscrete(Treenode* node,int ano)
+{
+	int i,j,size;
+	size = avals[ano].size();
+	vector< pair<int,int> >vals;
+	set<string>::iterator it = avals[ano].begin();
+	set<string>::iterator ti = it;
+	while(it!=avals[ano].end())
+	{
+		vals.push_back(make_pair(0,0));
+		it++;
+	}
+	it=ti;
+	size=node->data.size();
+	int tneg=0;
+	int tpos=0;
+	for(i=0;i<size;i++)
+	{
+		//cout<<*avals[ano].find(node->data[i].key[ano])<<endl;
+		int ind = distance(it,avals[ano].find(node->data[i].key[ano]));
+		if(node->data[i].val==false)
+		{
+			vals[ind].second++;
+			tneg++;
+		}
+		else
+		{
+			vals[ind].first++;
+			tpos++;
+		}
+	}
+	long double tentro = getEntropy(tpos,tneg);
+	size=avals[ano].size();
+	long double ig=0;
+	long double entro=0;
+	for(i=0;i<size;i++)
+	{
+		entro+=getEntropy(vals[i].first,vals[i].second)*((vals[i].first+vals[i].second)*1.0000000/(tpos*1.00+tneg));		
+	}
+	ig = tentro -entro;
+	return ig;
+}
+
+Treenode* Tree::getrootNode()
+{
+	return this->root;
+}
+
+void Tree::setrootNode()
+{
+	root = new Treenode();
+	root->setParent(NULL);
+	int i;
+	for(i=0;i<atbno;i++)
+	{
+		bool flag = true;
+		if(cvals.find(i)!=cvals.end())
+		{
+			flag = false; //false for continuous valued attributes.
+		}
+		root->aset[i]=flag;
+	}
+	root->data=tdata;
+	map<int,bool>::iterator it = root->aset.begin();
+	long double igmax = -1;
+	int nt=0;
+	int chosenOne = 0;
+	while(it!=root->aset.end())
+	{
+		//cout<<it->first<<endl;
+		if(it->second==false)
+		{
+			//continuous valued attributes, calculating igmax for split.
+			pair<long double,bool> val = splitContinuous(root,it->first); //splitContinuous returns igmax
+			long double ig = val.first;
+			//cout<<nt<<" "<<ig<<endl;
+			if(ig>igmax)
+			{
+				igmax = ig;
+				chosenOne = nt;
+			}
+		}
+		else
+		{
+			long double val = splitDiscrete(root,it->first);
+			//cout<<nt<<" "<<val<<endl;
+			if(val>igmax)
+			{
+				igmax = val;
+				chosenOne = nt;
+			}
+		}
+		it++;
+		nt++;
+	}
+	root->setAno(chosenOne);
+	cout<<root->getAno()<<endl;
+}
+
+void Tree::makeTree()
+{
+
 }

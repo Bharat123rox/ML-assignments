@@ -26,7 +26,7 @@ class Treenode
 	public:
 		Treenode();
 		std::vector< data_ds > data;
-		std::map<int,bool> aset;
+		std::map<int,bool> aset; //true if discrete, false if continuous
 		std::vector<Treenode*> children;
 		std::vector< data_ds > getData();
 		void setData(std::vector< data_ds > data);

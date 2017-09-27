@@ -130,7 +130,6 @@ int main()
 	}
 
 	long double tentro=getEntropy(tpos,tneg);
-	long double 
 	vector<long double> unif_vals;
 	for(i=0;i<6;i++)
 	{
