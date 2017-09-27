@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 #include <set>
 #include <map>
 #define ll long long int 
@@ -21,11 +22,11 @@ class Treenode
 	private:
 		Treenode* parent;
 		int ano;
-		std::vector< data_ds > data;
 		std::vector<Treenode*> children;
 
 	public:
 		Treenode();
+		std::vector< data_ds > data;
 		std::map<int,bool> aset;
 		std::vector< data_ds > getData();
 		void setData(std::vector< data_ds > data);

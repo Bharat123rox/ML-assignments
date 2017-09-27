@@ -1,0 +1,14 @@
+0: ?,continous
+1: ?,Federal-gov,Local-gov,Never-worked,Private,Self-emp-inc,Self-emp-not-inc,State-gov,Without-pay,
+2: ?,continous
+3: 10th,11th,12th,1st-4th,5th-6th,7th-8th,9th,?,Assoc-acdm,Assoc-voc,Bachelors,Doctorate,HS-grad,Masters,Preschool,Prof-school,Some-college,
+4: ?,continous
+5: ?,Divorced,Married-AF-spouse,Married-civ-spouse,Married-spouse-absent,Never-married,Separated,Widowed,
+6: ?,Adm-clerical,Armed-Forces,Craft-repair,Exec-managerial,Farming-fishing,Handlers-cleaners,Machine-op-inspct,Other-service,Priv-house-serv,Prof-specialty,Protective-serv,Sales,Tech-support,Transport-moving,
+7: ?,Husband,Not-in-family,Other-relative,Own-child,Unmarried,Wife,
+8: ?,Amer-Indian-Eskimo,Asian-Pac-Islander,Black,Other,White,
+9: ?,Female,Male,
+10: ?,continous
+11: ?,continous
+12: ?,continous
+13: ?,Cambodia,Canada,China,Columbia,Cuba,Dominican-Republic,Ecuador,El-Salvador,England,France,Germany,Greece,Guatemala,Haiti,Holand-Netherlands,Honduras,Hong,Hungary,India,Iran,Ireland,Italy,Jamaica,Japan,Laos,Mexico,Nicaragua,Outlying-US(Guam-USVI-etc),Peru,Philippines,Poland,Portugal,Puerto-Rico,Scotland,South,Taiwan,Thailand,Trinadad&Tobago,United-States,Vietnam,Yugoslavia,

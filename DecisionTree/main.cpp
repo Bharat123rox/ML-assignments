@@ -130,6 +130,7 @@ int main()
 	}
 
 	long double tentro=getEntropy(tpos,tneg);
+	long double 
 	vector<long double> unif_vals;
 	for(i=0;i<6;i++)
 	{
@@ -178,12 +179,5 @@ int main()
 		unif_vals.push_back(mval);
 	}
 	ins.close();
-	ofstream ofil;
-	ofil.open("./data/discretevals.txt",ios_base::out);
-	for(i=0;i<6;i++)
-	{
-		ofil<<ilkp[i]<<" "<<unif_vals[i]<<"\n";
-	}
-	ofil.close();
 	return 0;
 }
