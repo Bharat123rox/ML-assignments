@@ -11,7 +11,6 @@ class Tree
 	public:
 		Tree();
 		std::vector< data_ds > tdata;
-		int iter;
 		int atbno;
 		std::map<int,std::set<std::string> > avals; //Storing the possible values of an attribute (index of attrb is map's key)
 		std::set<int> cvals; //stores the index of attibutes with continuous values.

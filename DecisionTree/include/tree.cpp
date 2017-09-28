@@ -9,7 +9,6 @@ Tree::Tree()
 {
 	this->root = NULL;
 	this->tdata.clear();
-	iter=0;
 }
 
 bool compare(pair<int,bool> p1,pair<int,bool> p2)
@@ -521,7 +520,6 @@ void Tree::setrootNode()
 
 void Tree::makeTree(Treenode* node)
 {
-	iter++;
 	if(node->pos==0 || node->neg==0 || node->aset.size()==0 || node->data.size()==0)
 	{
 		node->setAno(-1);
@@ -661,11 +659,22 @@ void Tree::traverse(Treenode* node)
 	int i,size;
 	size=node->children.size();
 	//cout<<node->getAno()<<" "<<node->pos<<" "<<node->neg<<endl;
-	set<string>::iterator it = avals[node->getAno()].begin();
-	for(i=0;i<size;i++)
+	int ano = node->getAno();
+	if(cvals.size()>0 && cvals.find(ano)!=cvals.end())
 	{
-		cout<<node->getAno()<<" "<<*it<<endl;
-		traverse(node->children[i]);
-		it++;
+		cout<<ano<<" "<<"<="<<intToString((node->children[0])->cv)<<endl;
+		traverse(node->children[0]);
+		cout<<ano<<" "<<">"<<intToString((node->children[1])->cv)<<endl;
+		traverse(node->children[1]);
+	}
+	else
+	{
+		set<string>::iterator it = avals[node->getAno()].begin();
+		for(i=0;i<size;i++)
+		{
+			cout<<node->getAno()<<" "<<*it<<endl;
+			traverse(node->children[i]);
+			it++;
+		}
 	}
 }
