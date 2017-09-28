@@ -6,23 +6,18 @@ using namespace std;
 int main()
 {
 	Tree tree;
-	tree.loadDomainKnowledge("/home/nitish/Documents/ML/ML-assignments/DecisionTree/data/description.txt");
-	//cout<<tree.atbno<<endl;
-	tree.loadTrainingData("/home/nitish/Documents/ML/ML-assignments/DecisionTree/raw_data/data.csv",tree.atbno);
+	tree.loadDomainKnowledge("/home/nitish/Documents/ML/ML-assignments/DecisionTree/data/sample2.txt");
+	tree.loadTrainingData("/home/nitish/Documents/ML/ML-assignments/DecisionTree/data/sample1.txt",tree.atbno);
 	int i,size=0;
-	//std::set<int>::iterator it = tree.cvals.begin();
-	//Treenode* root = new Treenode();
-	//root->data = tree.tdata;
-	/*while(it!=tree.cvals.end())
-	{
-		cout<<*it<<" ";
-		cout<<tree.splitContinuous(root,*it).first<<endl;
-		it++;
-	}*/
 	tree.setrootNode();
 	tree.printData();
-	//tree.printinfo();
 	tree.makeTree(tree.getrootNode());
 	tree.traverse(tree.getrootNode());
+	vector<string> val;
+	val.push_back("Overcast");
+	val.push_back("Hot");
+	val.push_back("Normal");
+	val.push_back("Strong");
+	cout<<tree.predict(val,tree.getrootNode())<<endl;
 	return 0;
 }

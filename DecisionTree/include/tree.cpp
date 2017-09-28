@@ -678,3 +678,32 @@ void Tree::traverse(Treenode* node)
 		}
 	}
 }
+
+bool Tree::predict(vector<string> &test, Treenode* node)
+{
+	if(node->getAno()==-1 || node->pos==0 || node->neg==0)
+	{
+		if(node->pos<node->neg)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	int ano = node->getAno();
+	if(cvals.size()>0 && cvals.find(ano)!=cvals.end())
+	{
+		int cv = (node->children[0])->cv;
+		int val = stringToInt(test[ano]);
+		if(val<=cv)
+		{
+			return predict(test,node->children[0]);
+		}
+		return predict(test,node->children[1]);
+	}
+	set<string>::iterator it = avals[ano].begin();
+	int ind = distance(it,avals[ano].find(test[ano]));
+	return predict(test,node->children[ind]);
+}
