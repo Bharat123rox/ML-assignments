@@ -524,6 +524,7 @@ void Tree::makeTree(Treenode* node)
 	iter++;
 	if(node->pos==0 || node->neg==0 || node->aset.size()==0 || node->data.size()==0)
 	{
+		node->setAno(-1);
 		return;
 	}
 	set<int>::iterator it = node->aset.begin();
@@ -535,8 +536,8 @@ void Tree::makeTree(Treenode* node)
 	while(it!=node->aset.end())
 	{
 		//cout<<it->first<<endl;
-		cout<<*it<<" ";
-		if(cvals.find(*it)!=cvals.end())
+		//cout<<*it<<" ";
+		if(cvals.size()>0 && cvals.find(*it)!=cvals.end())
 		{
 			//cout<<"idhar"<<endl;
 			//continuous valued attributes, calculating igmax for split.
@@ -565,21 +566,22 @@ void Tree::makeTree(Treenode* node)
 		it++;
 		nt++;
 	}
-	cout<<endl;
+	//cout<<endl;
 	node->setAno(chosenOne);
-	//cout<<node->getAno()<<" "<<iter<<" "<<node->aset.size()<<endl;
+	//cout<<node->getAno()<<endl;
 	int i,j,size;
 	int ano = node->getAno();
 	node->aset.erase(ano);
 	size=node->data.size();
-	if(cvals.find(ano)!=cvals.end())
+	it = node->aset.begin();
+	if(cvals.size()>0 && cvals.find(ano)!=cvals.end())
 	{
 		node->children.resize(2);
 		node->children[0] = new Treenode();
 		node->children[1] = new Treenode();
 		(node->children[0])->aset=node->aset;
 		(node->children[1])->aset=node->aset;
-		cout<<"The: "<<splitval<<" "<<node->aset.size()<<" "<<node->data.size()<<" "<<ff<<endl;
+		//cout<<"The: "<<splitval<<" "<<node->aset.size()<<" "<<node->data.size()<<" "<<ff<<endl;
 		size=node->data.size();
 		for(i=0;i<size;i++)
 		{
@@ -606,6 +608,7 @@ void Tree::makeTree(Treenode* node)
 	else
 	{
 		size=avals[ano].size();
+		//cout<<size<<" "<<ano<<endl;
 		node->children.resize(size);
 		set<string>::iterator it = avals[ano].begin();
 		for(i=0;i<size;i++)
@@ -618,6 +621,7 @@ void Tree::makeTree(Treenode* node)
 		for(i=0;i<size;i++)
 		{
 			int ind = distance(it,avals[ano].find(node->data[i].key[ano]));
+			//cout<<ind<<endl;
 			(node->children[ind])->data.push_back(node->data[i]);
 			if(node->data[i].val==false)
 			{
@@ -628,6 +632,7 @@ void Tree::makeTree(Treenode* node)
 				(node->children[ind])->pos++;
 			}
 		}
+		//cout<<"hello"<<endl;
 	}
 	//cout<<"That: "<<node->aset.size()<<endl;
 	node->data.clear();
@@ -636,5 +641,31 @@ void Tree::makeTree(Treenode* node)
 	for(i=0;i<size;i++)
 	{
 		makeTree(node->children[i]);
+	}
+}
+
+void Tree::traverse(Treenode* node)
+{
+	if(node->getAno()==-1 || node->pos==0 || node->neg==0 )
+	{
+		if(node->pos<node->neg)
+		{
+			cout<<"No"<<endl;
+		}
+		else
+		{
+			cout<<"Yes"<<endl;
+		}
+		return;
+	}
+	int i,size;
+	size=node->children.size();
+	//cout<<node->getAno()<<" "<<node->pos<<" "<<node->neg<<endl;
+	set<string>::iterator it = avals[node->getAno()].begin();
+	for(i=0;i<size;i++)
+	{
+		cout<<node->getAno()<<" "<<*it<<endl;
+		traverse(node->children[i]);
+		it++;
 	}
 }

@@ -26,6 +26,7 @@ class Tree
 		void printinfo();
 		void setrootNode();
 		void makeTree(Treenode* node);
+		void traverse(Treenode* node);
 		Treenode* getrootNode();
 };
 

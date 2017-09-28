@@ -7,6 +7,8 @@ Treenode::Treenode()
 	this->aset.clear();
 	this->data.clear();
 	this->children.clear();
+	this->pos=0;
+	this->neg=0;
 }
 
 std::vector< data_ds > Treenode::getData()

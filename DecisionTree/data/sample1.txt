@@ -3,7 +3,7 @@ Sunny, Hot, High, Strong, <=50K
 Overcast, Hot, High, Weak, >50K
 Rain, Mild, High, Weak, >50K
 Rain, Cool, Normal, Weak, >50K
-Rain, Cool, Normal ,Strong, <=50K
+Rain, Cool, Normal, Strong, <=50K
 Overcast, Cool, Normal, Strong, >50K
 Sunny, Mild, High, Weak, <=50K
 Sunny, Cool, Normal, Weak, >50K
