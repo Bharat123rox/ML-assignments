@@ -1,0 +1,4 @@
+outlook: Sunny, Overcast, Rain.
+temperature: Hot, Mild, Cool.
+humidity: High, Normal.
+wind: Weak, Strong.

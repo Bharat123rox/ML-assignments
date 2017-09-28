@@ -9,6 +9,7 @@ Tree::Tree()
 {
 	this->root = NULL;
 	this->tdata.clear();
+	iter=0;
 }
 
 bool compare(pair<int,bool> p1,pair<int,bool> p2)
@@ -275,7 +276,7 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 	for(i=0;i<size;i++)
 	{
 		if(cvals.find(i)==cvals.end())
-		{		
+		{
 			sort(pdf[i].begin(),pdf[i].end(),compare2);
 			sort(ndf[i].begin(),ndf[i].end(),compare2);
 		}
@@ -312,7 +313,7 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 			temp.push_back(j);
 			j++;
 		}
-		if(temp.compare(">50K")==0)
+		if(temp.compare(">50K.")==0)
 		{
 			flag = true;
 		}
@@ -392,7 +393,7 @@ void Tree::printinfo()
 	}
 }
 
-pair<long double,bool> Tree::splitContinuous(Treenode* node,int ano)
+pair<long double,int> Tree::splitContinuous(Treenode* node,int ano)
 {
 	int i,size;
 	size=node->data.size();
@@ -418,14 +419,10 @@ pair<long double,bool> Tree::splitContinuous(Treenode* node,int ano)
 	int lpos=0;
 	int lneg=0;
 	long double tentro = getEntropy(tpos,tneg);
-	if(tneg==0 || tpos==0)
-	{
-		return make_pair(tentro,true);
-	}
 	size=arr.size();
 	long double lentro=0;
 	long double igmax=-1;
-	int mval=0;
+	int mval=arr[0].first;
 	if(arr[0].second==false)
 	{
 		lneg++;
@@ -459,7 +456,7 @@ pair<long double,bool> Tree::splitContinuous(Treenode* node,int ano)
 			lpos++;
 		}
 	}
-	return make_pair(igmax,false);
+	return make_pair(igmax,mval);
 }
 
 long double Tree::splitDiscrete(Treenode* node,int ano)
@@ -501,7 +498,7 @@ long double Tree::splitDiscrete(Treenode* node,int ano)
 	{
 		entro+=getEntropy(vals[i].first,vals[i].second)*((vals[i].first+vals[i].second)*1.0000000/(tpos*1.00+tneg));		
 	}
-	ig = tentro -entro;
+	ig = tentro-entro;
 	return ig;
 }
 
@@ -517,51 +514,127 @@ void Tree::setrootNode()
 	int i;
 	for(i=0;i<atbno;i++)
 	{
-		bool flag = true;
-		if(cvals.find(i)!=cvals.end())
-		{
-			flag = false; //false for continuous valued attributes.
-		}
-		root->aset[i]=flag;
+		root->aset.insert(i);
 	}
-	root->data=tdata;
-	map<int,bool>::iterator it = root->aset.begin();
+	root->setData(this->tdata);
+}
+
+void Tree::makeTree(Treenode* node)
+{
+	iter++;
+	if(node->pos==0 || node->neg==0 || node->aset.size()==0 || node->data.size()==0)
+	{
+		return;
+	}
+	set<int>::iterator it = node->aset.begin();
 	long double igmax = -1;
 	int nt=0;
-	int chosenOne = 0;
-	while(it!=root->aset.end())
+	int chosenOne = *it;
+	int splitval=-1;
+	bool ff = false;
+	while(it!=node->aset.end())
 	{
 		//cout<<it->first<<endl;
-		if(it->second==false)
+		cout<<*it<<" ";
+		if(cvals.find(*it)!=cvals.end())
 		{
+			//cout<<"idhar"<<endl;
 			//continuous valued attributes, calculating igmax for split.
-			pair<long double,bool> val = splitContinuous(root,it->first); //splitContinuous returns igmax
+			pair<long double,int> val = splitContinuous(node,*it); //splitContinuous returns igmax
 			long double ig = val.first;
 			//cout<<nt<<" "<<ig<<endl;
-			if(ig>igmax)
+			if(ig>=igmax)
 			{
+				ff=true;
 				igmax = ig;
-				chosenOne = nt;
+				chosenOne = *it;
+				splitval=val.second;
 			}
 		}
 		else
 		{
-			long double val = splitDiscrete(root,it->first);
-			//cout<<nt<<" "<<val<<endl;
+			//cout<<"udhar"<<endl;
+			long double val = splitDiscrete(node,*it);
 			if(val>igmax)
 			{
+				ff=false;
 				igmax = val;
-				chosenOne = nt;
+				chosenOne = *it;
 			}
 		}
 		it++;
 		nt++;
 	}
-	root->setAno(chosenOne);
-	cout<<root->getAno()<<endl;
-}
-
-void Tree::makeTree()
-{
-
+	cout<<endl;
+	node->setAno(chosenOne);
+	//cout<<node->getAno()<<" "<<iter<<" "<<node->aset.size()<<endl;
+	int i,j,size;
+	int ano = node->getAno();
+	node->aset.erase(ano);
+	size=node->data.size();
+	if(cvals.find(ano)!=cvals.end())
+	{
+		node->children.resize(2);
+		node->children[0] = new Treenode();
+		node->children[1] = new Treenode();
+		(node->children[0])->aset=node->aset;
+		(node->children[1])->aset=node->aset;
+		cout<<"The: "<<splitval<<" "<<node->aset.size()<<" "<<node->data.size()<<" "<<ff<<endl;
+		size=node->data.size();
+		for(i=0;i<size;i++)
+		{
+			int tv = stringToInt(node->data[i].key[ano]);
+			int ind=1;
+			if(tv<=splitval)
+			{
+				ind=0;
+			}
+			(node->children[ind])->data.push_back(node->data[i]);
+			if(node->data[i].val==false)
+			{
+				(node->children[ind])->neg++;
+			}
+			else
+			{
+				(node->children[ind])->pos++;
+			}
+		}
+		(node->children[0])->cv=splitval;
+		(node->children[1])->cv=splitval;
+		//cout<<node->data.size()<<" "<<(node->children[0])->data.size()<<" "<<(node->children[1])->data.size()<<endl;
+	}
+	else
+	{
+		size=avals[ano].size();
+		node->children.resize(size);
+		set<string>::iterator it = avals[ano].begin();
+		for(i=0;i<size;i++)
+		{
+			node->children[i] = new Treenode();
+			(node->children[i])->aset=node->aset;
+		}
+		size=node->data.size();
+		//cout<<"These: "<<ano<<" "<<size<<endl;
+		for(i=0;i<size;i++)
+		{
+			int ind = distance(it,avals[ano].find(node->data[i].key[ano]));
+			(node->children[ind])->data.push_back(node->data[i]);
+			if(node->data[i].val==false)
+			{
+				(node->children[ind])->neg++;
+			}
+			else
+			{
+				(node->children[ind])->pos++;
+			}
+		}
+	}
+	//cout<<"That: "<<node->aset.size()<<endl;
+	node->data.clear();
+	node->aset.clear();
+	size = node->children.size();
+	for(i=0;i<size;i++)
+	{
+		makeTree(node->children[i]);
+	}
 }

@@ -19,5 +19,6 @@ int main()
 		it++;
 	}*/
 	tree.setrootNode();
+	tree.makeTree(tree.getrootNode());
 	return 0;
 }
