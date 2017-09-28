@@ -27,6 +27,7 @@ class Tree
 		void makeTree(Treenode* node);
 		void traverse(Treenode* node);
 		bool predict(std::vector<std::string> &test,Treenode* node);
+		void runtest(std::string datafile);
 		Treenode* getrootNode();
 };
 

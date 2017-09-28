@@ -707,3 +707,71 @@ bool Tree::predict(vector<string> &test, Treenode* node)
 	int ind = distance(it,avals[ano].find(test[ano]));
 	return predict(test,node->children[ind]);
 }
+
+void Tree::runtest(string datafile)
+{
+	int i,j,size;
+	size = datafile.length();
+	char* buff = new char[size+1];
+	for(i=0;i<size;i++)
+	{
+		buff[i] = datafile[i];
+	}
+	ifstream ifil;
+	string line;
+	int total=0;
+	int correct=0;
+	ifil.open(buff,std::fstream::in);
+	while(!ifil.eof())
+	{
+		getline(ifil,line);
+		size = line.length();
+		vector<string> vals;
+		string temp="";
+		queue<string> wq;
+		bool flag = false;
+		for(i=0;i<size;i++)
+		{
+			if(line[i]==',')
+			{
+				if(temp.compare("?")==0)
+				{
+					temp="";
+					wq.push(line);
+					flag = true;
+					break;
+				}
+				else
+				{
+					vals.push_back(temp);
+					temp="";
+					i++;
+				}
+			}
+			else
+			{
+				temp.push_back(line[i]);
+			}
+		}
+		if(!flag)
+		{
+			vals.push_back(temp);
+			size=vals.size();
+			bool cl = true;
+			if(vals[size-1].compare("<=50K.")==0)
+			{
+				cl = false;
+			}
+			vals.pop_back();
+			size--;
+			bool ans = predict(vals,root);
+			if(ans==cl)
+			{
+				correct++;
+			}
+			total++;
+		}
+	}
+	ifil.close();
+	cout<<"Total data : "<<total<<", Correct : "<<correct<<endl;
+}
