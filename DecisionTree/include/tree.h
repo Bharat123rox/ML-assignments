@@ -5,10 +5,8 @@
 
 class Tree
 {
-	private:
-		Treenode* root;
-
 	public:
+		Treenode* root;
 		Tree();
 		std::vector< data_ds > tdata;
 		int atbno;
@@ -29,6 +27,7 @@ class Tree
 		bool predict(std::vector<std::string> &test,Treenode* node);
 		void runtest(std::string datafile);
 		Treenode* getrootNode();
+		~Tree();
 };
 
 #endif

@@ -65,3 +65,11 @@ void Treenode::setChildren(std::vector<Treenode* >children)
 {
 	this->children = children;
 }
+
+Treenode::~Treenode()
+{
+	data.clear();
+	aset.clear();
+	if(!children.empty()) for(auto ch:children) delete ch;
+	if(!children.empty()) children.clear();
+}

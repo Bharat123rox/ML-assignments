@@ -9,6 +9,8 @@ Tree::Tree()
 {
 	this->root = NULL;
 	this->tdata.clear();
+	this->avals.clear();
+	this->avals.clear();
 }
 
 bool compare(pair<int,bool> p1,pair<int,bool> p2)
@@ -712,16 +714,19 @@ void Tree::runtest(string datafile)
 {
 	int i,j,size;
 	size = datafile.length();
+	//cout<<datafile<<endl;
 	char* buff = new char[size+1];
 	for(i=0;i<size;i++)
 	{
 		buff[i] = datafile[i];
 	}
+	buff[i]='\0';
 	ifstream ifil;
 	string line;
 	int total=0;
 	int correct=0;
 	ifil.open(buff,std::fstream::in);
+	int ii=0;
 	while(!ifil.eof())
 	{
 		getline(ifil,line);
@@ -764,7 +769,7 @@ void Tree::runtest(string datafile)
 			}
 			vals.pop_back();
 			size--;
-			bool ans = predict(vals,root);
+			bool ans = predict(vals,this->root);
 			if(ans==cl)
 			{
 				correct++;
@@ -774,4 +779,12 @@ void Tree::runtest(string datafile)
 	}
 	ifil.close();
 	cout<<"Total data : "<<total<<", Correct : "<<correct<<endl;
+}
+
+Tree::~Tree()
+{
+	this->tdata.clear();
+	this->avals.clear();
+	this->avals.clear();
+	delete this->root;
 }

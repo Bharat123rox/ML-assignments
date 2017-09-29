@@ -39,6 +39,7 @@ class Treenode
 		void setParent(Treenode* node);
 		std::vector<Treenode* > getChildren();
 		void setChildren(std::vector<Treenode* > children);
+		~Treenode();
 };
 
 #endif
