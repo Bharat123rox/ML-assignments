@@ -68,59 +68,45 @@ void collect()
 	//printtarget(target);
     //printfull(v);
 }
-bool is_general_than(vector<int> &v1,vector<int> &v2){ 
+bool is_general_than_equal_to(vector<int> &v1,vector<int> &v2){ 
 	//Returns true if v1 is strictly general than v2, false otherwise
-	unsigned int flag=0,ct=0,i;
+	unsigned int flag=0,i;
 	for(i=0;i<v1.size();i++){
-		if((v2[i]==q&&v1[i]<q)||(v2[i]>Null&&v1[i]==Null)){
-			flag=1; break;
-		}
-		else
-		{
-			if(v2[i]!=q&&v2[i]!=Null)
-			{
-				if(v1[i]!=v2[i])
-				{
-					flag=1; break;
-				}
-			}
-		}
-		if((v1[i]==q&&v2[i]<q)||(v1[i]>Null&&v2[i]==Null)){
-			++ct;
+		if( ( (v1[i]!=q&&v1[i]!=Null)&&
+			  (v1[i]!=v2[i]&&v2[i]!=Null) ) ||
+			(v1[i]==Null&&v2[i]!=Null) )
+		{ 
+			flag=1; break; 
 		}	
 	}
-	if(!ct) flag=1;
 	if(flag) return false;
 	else return true;
 }
-bool is_specific_than(vector<int> &v1,vector<int> &v2) {
-	//Returns true if v1 is strictly specific than v2, false otherwise
-	unsigned int flag=0,ct=0,i;
+bool is_specific_than_equal_to(vector<int> &v1,vector<int> &v2){ 
+	//Returns true if v1 is strictly general than v2, false otherwise
+	unsigned int flag=0,i;
 	for(i=0;i<v1.size();i++){
-		if((v1[i]==q&&v2[i]<q)||(v1[i]>Null&&v2[i]==Null)){
-			flag=1; break;
-		}
-		else
-		{
-			if(v2[i]!=q&&v2[i]!=Null)
-			{
-				if(v1[i]!=v2[i])
-				{
-					flag=1; break;
-				}
-			}
-		}
-		if((v2[i]==q&&v1[i]<q)||(v2[i]>Null&&v1[i]==Null)){
-			++ct;
+		if( ( (v1[i]!=q&&v1[i]!=Null)&&
+			  (v1[i]!=v2[i]&&v2[i]!=q) ) ||
+			(v1[i]==q&&v2[i]!=q) )
+		{ 
+			flag=1; break; 
 		}	
 	}
-	if(!ct) flag=1;
 	if(flag) return false;
 	else return true;
+}
+bool is_general_than(vector<int> &v1,vector<int> &v2)
+{
+	return (is_general_than_equal_to(v1,v2))&&(!is_specific_than_equal_to(v1,v2));
+}
+bool is_specific_than(vector<int> &v1,vector<int> &v2)
+{
+	return (is_specific_than_equal_to(v1,v2))&&(!is_general_than_equal_to(v1,v2));
 }
 int main(int argc, char const *argv[])
 {
-    int i;
+    ll i;
     //Initializes General and Specific Boundary of ALL 7 Version Spaces 
     for(i=1;i<=7;i++){           
         gb[i].push_back(v2);
@@ -146,112 +132,112 @@ int main(int argc, char const *argv[])
                                   {0,1},
                                   {0,1}};
 	ll j,k,m;
-	unsigned ll gbiterator,listiterator;
+
+    //Function that collects training examples
     collect();
     for(i=1;i<=7;i++)
     {
         //Algorithm begins here
         vector<int> temphyp,res,temp;
         //Hypothesis object
-        //Function that collects training examples
         for(j=0;j<=100;j++)
         {
             //Positive Example for Version Space gb[i] and sb[i]
             if(target[j]==i)	                             
             { 
                 //Negative Example for ALL other gb[m] and sb[m],m!=i,m=[1-7]
-                temphyp = sb[i];                          
-                if(is_specific_than(sb[i],v[j]))
-                { 
-
-                    //Iterates through ALL the attributes
-                    for(k=0;k<16;k++)					  
+                //Iterates through ALL the attributes
+                for(k=0;k<16;k++)					  
+                {
+                    if(sb[i][k]==Null)
                     {
-                        if(sb[i][k]==Null)
-                        {
-                            sb[i][k]=v[j][k];
-                        }
-                        else if(sb[i][k]!=v[j][k])
-                        {
-                            sb[i][k]=q;
-                        }
+                        sb[i][k]=v[j][k];
+                    }
+                    else if(sb[i][k]!=v[j][k])
+                    {
+                        sb[i][k]=q;
                     }
                 }
-                //Remove any hypothesis in gb[i] which is NOT general than sb 
-                for(gbiterator=0;gbiterator<gb[i].size();gbiterator++)
-                {
-                	if(is_general_than(gb[i][gbiterator],sb[i]))
-                	{
-                		//gb[i].erase(gb[i].begin()+gbiterator);
-                	}
-                }
-                ll gbflag=0;
-                for(gbiterator=0;gbiterator<gb[i].size();gbiterator++)
-                {
-                    if(is_general_than(gb[i][gbiterator],sb[i]))
-                    {
-                        gbflag++; break;
-                    }
-                }
-                //If this is true, there is NO general hypothesis more general than sb, hence it must be reverted
-                if(!gbflag) sb[i] = temphyp;
             }
-            else
+        }    
+        /*for(j=0;j<=100;j++)
+        {
+            for(m=1;m<=7;m++)
             {
-                for(m=1;m<=7;m++)
+                //Negative Examples only for m!=i
+                if((target[j]==i)&&(m==i)) continue;						
+                for(auto gbiterator=gb[m].begin();gbiterator<gb[m].end();gbiterator++)
                 {
-                    //Negative Examples only for m!=i
-                    if(m==i) continue;							
-                    for(gbiterator=0;gbiterator<gb[m].size();gbiterator++)
+                	res = *gbiterator;
+                	temp = *gbiterator;
+                	if(is_general_than_equal_to(*gbiterator,v[j]))
+                	{
+                		gb[m].erase(gbiterator);
+                	}
+                    //Iterates through ALL the attributes
+                    for(k=0;k<16;k++)
                     {
-                        temphyp = gb[m][gbiterator];
-                        if(is_general_than(gb[m][gbiterator],v[j]))
+						vector<int> res1 = res;
+						cout<<'\n';
+                        if(temp[k]==q)
+                        {		
+                    		for(unsigned ll listiterator=0;listiterator<lists[k].size();listiterator++)
+                    		{	
+                    			if(lists[k][listiterator]==v[j][k]) {;}
+                    			else
+                    			{
+                    				res1[k]=lists[k][listiterator];
+                    				for(auto m:res1)
+                    				{
+                    					if(m==200)
+                    						cout<<"? ";
+                    					else
+                    						cout<<m<<' ';
+                    				}
+                    				gb[m].push_back(res1);
+                    				res1.clear();
+                    			}
+                    		}
+                    		cout<<'\n';
+                        }
+                        else if(temp[k]==v[j][k])
                         {
-                        	res = gb[m][gbiterator];
-                        	temp = gb[m][gbiterator];
-                        	//gb[m].erase(gb[m].begin()+gbiterator);
-                            //Iterates through ALL the attributes
-                            for(k=0;k<16;k++)		
-                            {
-                                if(temp[k]==q)
-                                {
-                                		for(listiterator=0;listiterator<lists[k].size();listiterator++)
-                                		{
-                                			if(lists[k][listiterator]==v[j][k]) continue;
-                                			else
-                                			{
-                                				res[k]=lists[k][listiterator];
-                                				gb[m].push_back(res);
-                                			}
-                                		}
-                                }
-                                else if(temp[k]==v[j][k])
-                                {
-									gb[m][gbiterator][k]=Null;                       	
-                                }
-                            }
+							res[k]=Null;
+							gb[m].push_back(res);
                         }
                     }
-                    ll sbflag=0;
+                }
+                res.clear();
+                temp.clear();
+            }
+                ll sbflag=0;
+					//Remove any hypothesis in gb[i] which is NOT general than sb 
                     for(gbiterator=0;gbiterator<gb[m].size();gbiterator++)
                     {
                         if(is_general_than(gb[m][gbiterator],sb[m]))
                         {
                             sbflag++; break; 
                         }
+
                         //If this is true, there is NO specific hypothesis more specific than gb, hence it must be reverted
                         if(!sbflag) gb[m][gbiterator] = temphyp;
                     }
-                }
-            }
-        }
-    }
+        }*/
+        /*for(gbiterator=0;gbiterator<gb[i].size();gbiterator++)
+        {
+        	if(!is_general_than(gb[i][gbiterator],sb[i]))
+        	{
+        		gb[i].erase(gb[i].begin()+gbiterator);
+        	}
+        }*/
+	}    
     for(i=1;i<=7;i++)
     {
+    	unsigned ll gbiterator;
 		cout<<"Version Space "<<i<<":- ";
+		/*cout<<"\nGB: ";
     	for(gbiterator=0;gbiterator<gb[i].size();gbiterator++)
     	{
-    		cout<<"\nGB: ";
     		cout<<"\n-------------------------\n";
     		for(j=0;j<16;j++)
     		{
@@ -263,9 +249,9 @@ int main(int argc, char const *argv[])
     				cout<<gb[i][gbiterator][j]<<' ';
     		}
     		cout<<"\n------------------------\n";
-    	}
+    	}*/
     	cout<<"SB: \n";
-    	cout<<'\n';
+    	cout<<"\n-------------------------\n";
     	for(k=0;k<16;k++)
     	{
     		if(sb[i][k]==-200)
@@ -275,7 +261,7 @@ int main(int argc, char const *argv[])
     		else
     			cout<<sb[i][k]<<' ';
     	}
-    	cout<<'\n';
+    	cout<<"\n-------------------------\n";
     }
     return 0;
 }
