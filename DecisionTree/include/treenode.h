@@ -21,6 +21,7 @@ class Treenode
 		int pos;
 		int neg;
 		int cv;
+		std::pair<int,int> missing;
 		std::vector< data_ds > data;
 		std::set<int> aset; //true if discrete, false if continuous
 		std::vector<Treenode*> children;

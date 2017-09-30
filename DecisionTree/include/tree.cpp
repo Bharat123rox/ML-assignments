@@ -156,37 +156,8 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 	buff[i]='\0';
 	ifil.open(buff,fstream::in);
 	string line;
-	vector<ll> pcvals;
-	vector<ll> ncvals;
-	map<int, vector< pair<string,int> > > pdf;
-	map<int, vector< pair<string,int> > > ndf;
-	size = cvals.size();
-	int npos=0;
-	int nneg=0;
-	for(i=0;i<size;i++)
-	{
-		pcvals.push_back(0);
-		ncvals.push_back(0);
-	}
-	for(i=0;i<atbno;i++)
-	{
-		if(cvals.find(i)==cvals.end())
-		{
-			size = avals[i].size();
-			pair<string,int> temp;
-			set<string>::iterator it = avals[i].begin();
-			while(it!=avals[i].end())
-			{
-				pdf[i].push_back(make_pair(*it,0));
-				ndf[i].push_back(make_pair(*it,0));
-				it++;
-			}
-		}
-	}
-	int lno=0;
 	while(!ifil.eof())
 	{
-		lno++;
 		data_ds ds;
 		string temp="";
 		getline(ifil,line);
@@ -197,10 +168,6 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 		{
 			if(line[i]==',')
 			{
-				if(temp.compare("?")==0)
-				{
-					flag=true;
-				}
 				vals.push_back(temp);
 				temp="";
 				i++;
@@ -210,175 +177,14 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 				temp.push_back(line[i]);
 			}
 		}
-		if(!flag)
-		{
-			//vals.push_back(temp);
-			size = vals.size();
-			ds.key = vals;
-			if(temp.compare("<=50K")==0)
-			{
-				ds.val=false;
-			}
-			else
-			{
-				ds.val=true;
-			}
-			for(i=0;i<size;i++)
-			{
-				if(cvals.find(i)==cvals.end())
-				{
-					string av = vals[i];
-					int lls = avals[i].size();
-					if(ds.val==false)
-					{
-						for(j=0;j<lls;j++)
-						{
-							if(ndf[i][j].first.compare(av)==0)
-							{
-								ndf[i][j].second++;
-								break;
-							}
-						}
-					}
-					else
-					{
-						for(j=0;j<lls;j++)
-						{
-							if(pdf[i][j].first.compare(av)==0)
-							{
-								pdf[i][j].second++;
-								break;
-							}
-						}
-					}
-				}
-				else
-				{
-					int ind = distance(cvals.begin(),cvals.find(i));
-					//cout<<ind<<endl;
-					if(ds.val==false)
-					{
-						ncvals[ind]=ncvals[ind]+stringToInt(vals[i]);
-						nneg++;
-					}
-					else
-					{
-						npos++;
-						pcvals[ind]=pcvals[ind]+stringToInt(vals[i]);
-					}
-				}
-			}
-			tdata.push_back(ds);
-		}
-		else
-		{
-			//vals.push_back(temp);
-			size = vals.size();
-			if(temp.compare("<=50K")==0)
-			{
-				ds.val=false;
-			}
-			else
-			{
-				ds.val=true;
-			}
-			ds.key = vals;
-			wq.push(ds);
-		}
-		//cout<<lno<<endl;
-	}
-	//cout<<"done"<<endl;
-	delete[] buff;
-	ifil.close();
-	size = cvals.size();
-	for(i=0;i<size;i++)
-	{
-		pcvals[i] = floor((pcvals[i]*1.00000/npos)+0.5);
-		ncvals[i] = floor((ncvals[i]*1.00000/nneg)+0.5);
-		//cout<<i<<" "<<pcvals[i]<<" "<<ncvals[i]<<endl;
-	}
-	size=atbno;
-	for(i=0;i<size;i++)
-	{
-		if(cvals.find(i)==cvals.end())
-		{
-			sort(pdf[i].begin(),pdf[i].end(),compare2);
-			sort(ndf[i].begin(),ndf[i].end(),compare2);
-		}
-	}
-	for(i=0;i<size;i++)
-	{
-		if(cvals.find(i)==cvals.end())
-		{
-			int lls = avals[i].size();
-			for(j=1;j<lls;j++)
-			{
-				pdf[i][j].second=pdf[i][j-1].second+pdf[i][j].second;
-				ndf[i][j].second=ndf[i][j-1].second+ndf[i][j].second;	
-			}
-		}
-	}
-	while(!wq.empty())
-	{
-		data_ds ds = wq.front();
-		wq.pop();
-		size = atbno;
-		for(i=0;i<size;i++)
-		{
-			if(ds.key[i].compare("?")==0)
-			{
-				if(cvals.find(i)!=cvals.end())
-				{
-					if(ds.val==false)
-					{
-						ds.key[i] = intToString(ncvals[i]);
-					}
-					else
-					{
-						ds.key[i] = intToString(pcvals[i]);
-					}
-				}
-				else
-				{
-					int lls = avals[i].size();
-					int mval=0;
-					if(ds.val==false)
-					{
-						mval=ndf[i][lls-1].second+1;
-						int rno = rand()%mval;
-						for(j=0;j<lls;j++)
-						{
-							if(ndf[i][j].second>=rno)
-							{
-								ds.key[i] = ndf[i][j].first;
-								break;
-							}
-						}
-					}
-					else
-					{
-						mval=pdf[i][lls-1].second+1;
-						int rno=rand()%mval;
-						for(j=0;j<lls;j++)
-						{
-							if(pdf[i][j].second>=rno)
-							{
-								ds.key[i] = pdf[i][j].first;
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		size = ds.key.size();
-		/*for(i=0;i<size;i++)
-		{
-			cout<<ds.key[i]<<" ";
-		}
-		cout<<ds.val<<endl;*/
+		size = vals.size();
+		ds.key = vals;
+		if(temp.compare("<=50K")==0) ds.val=false;
+		else ds.val=true;
 		tdata.push_back(ds);
 	}
+	delete[] buff;
+	ifil.close();
 }
 
 void Tree::printData()
@@ -415,7 +221,7 @@ void Tree::printinfo()
 	}
 }
 
-pair<long double,int> Tree::splitContinuous(Treenode* node,int ano)
+pair<long double,int> Tree::splitContinuous(Treenode* node,int ano, pair<int,int>& missing)
 {
 	int i,size;
 	size=node->data.size();
@@ -423,8 +229,19 @@ pair<long double,int> Tree::splitContinuous(Treenode* node,int ano)
 	pair<int,bool> temp;
 	int tpos=0;
 	int tneg=0;
+	missing = make_pair(0,0);
+	for(i=0;i<size;i++){
+		auto tmpd = node->data[i];
+		if(tmpd.key[ano]=="?") continue;
+		if(tmpd.val==false) missing.first+=stringToInt(tmpd.key[ano]), tneg++;
+		else missing.second+=stringToInt(tmpd.key[ano]), tpos++;
+	}
+	missing.first=int(missing.first/tneg);
+	missing.second=int(missing.second/tpos);
+	tneg=tpos=0;
 	for(i=0;i<size;i++)
 	{
+		if(node->data[i].key[ano]=="?") node->data[i].key[ano] = intToString(((node->data[i].val)?missing.second:missing.first)); 
 		temp.first = stringToInt(node->data[i].key[ano]);
 		temp.second = node->data[i].val;
 		if(temp.second==false)
@@ -481,7 +298,7 @@ pair<long double,int> Tree::splitContinuous(Treenode* node,int ano)
 	return make_pair(igmax,mval);
 }
 
-long double Tree::splitDiscrete(Treenode* node,int ano)
+long double Tree::splitDiscrete(Treenode* node,int ano, pair<int,int>& missing)
 {
 	int i,j,size;
 	size = avals[ano].size();
@@ -497,10 +314,26 @@ long double Tree::splitDiscrete(Treenode* node,int ano)
 	size=node->data.size();
 	int tneg=0;
 	int tpos=0;
+	vector<int> cntp(avals[ano].size(), 0), cntn(avals[ano].size(), 0);
+	for(i=0;i<size;i++)
+	{
+		if(node->data[i].key[ano]=="?") continue;
+		int ind = distance(it,avals[ano].find(node->data[i].key[ano]));
+		if(node->data[i].val==false) cntn[ind]++;
+		else cntp[ind]++;
+	}
+	int mx=0,idx=0;
+	for(i=0;i<avals[ano].size();i++) if(mx<cntn[i]) mx=cntn[i],idx=i;
+	missing.first=idx;
+	mx=0,idx=0;
+	for(i=0;i<avals[ano].size();i++) if(mx<cntp[i]) mx=cntp[i],idx=i;
+	missing.second=idx;
 	for(i=0;i<size;i++)
 	{
 		//cout<<*avals[ano].find(node->data[i].key[ano])<<endl;
-		int ind = distance(it,avals[ano].find(node->data[i].key[ano]));
+		int ind;
+		if(node->data[i].key[ano]=="?") ind=((node->data[i].val)?missing.second:missing.first);
+		else ind=distance(it,avals[ano].find(node->data[i].key[ano]));
 		if(node->data[i].val==false)
 		{
 			vals[ind].second++;
@@ -554,15 +387,16 @@ void Tree::makeTree(Treenode* node)
 	int chosenOne = *it;
 	int splitval=-1;
 	bool ff = false;
+	pair<int,int> tmpm;
 	while(it!=node->aset.end())
 	{
 		//cout<<it->first<<endl;
-		//cout<<*it<<" ";
 		if(cvals.size()>0 && cvals.find(*it)!=cvals.end())
 		{
+			//cout<<*it<<" continuous \n";
 			//cout<<"idhar"<<endl;
 			//continuous valued attributes, calculating igmax for split.
-			pair<long double,int> val = splitContinuous(node,*it); //splitContinuous returns igmax
+			pair<long double,int> val = splitContinuous(node,*it, tmpm); //splitContinuous returns igmax
 			long double ig = val.first;
 			//cout<<nt<<" "<<ig<<endl;
 			if(ig>=igmax)
@@ -570,15 +404,18 @@ void Tree::makeTree(Treenode* node)
 				ff=true;
 				igmax = ig;
 				chosenOne = *it;
+				node->missing = tmpm;
 				splitval=val.second;
 			}
 		}
 		else
 		{
+			//cout<<*it<<" discrete\n";
 			//cout<<"udhar"<<endl;
-			long double val = splitDiscrete(node,*it);
+			long double val = splitDiscrete(node,*it, tmpm);
 			if(val>igmax)
 			{
+				node->missing = tmpm;
 				ff=false;
 				igmax = val;
 				chosenOne = *it;
@@ -588,6 +425,7 @@ void Tree::makeTree(Treenode* node)
 		nt++;
 	}
 	//cout<<endl;
+	//cout<<"Chosen "<<chosenOne<<endl;
 	node->setAno(chosenOne);
 	//cout<<node->getAno()<<endl;
 	int i,j,size;
@@ -616,7 +454,9 @@ void Tree::makeTree(Treenode* node)
 		size=node->data.size();
 		for(i=0;i<size;i++)
 		{
-			int tv = stringToInt(node->data[i].key[ano]);
+			int tv;
+			if(node->data[i].key[ano]=="?") tv=((node->data[i].val)?node->missing.second:node->missing.first);
+			else tv = stringToInt(node->data[i].key[ano]);
 			int ind=1;
 			if(tv<=splitval)
 			{
@@ -651,7 +491,10 @@ void Tree::makeTree(Treenode* node)
 		//cout<<"These: "<<ano<<" "<<size<<endl;
 		for(i=0;i<size;i++)
 		{
-			int ind = distance(it,avals[ano].find(node->data[i].key[ano]));
+
+			int ind; 
+			if(node->data[i].key[ano]=="?") ind=((node->data[i].val)?node->missing.second:node->missing.first);
+			else ind = distance(it,avals[ano].find(node->data[i].key[ano]));
 			//cout<<ind<<endl;
 			(node->children[ind])->data.push_back(node->data[i]);
 			if(node->data[i].val==false)
@@ -729,7 +572,9 @@ bool Tree::predict(vector<string> &test, Treenode* node)
 	if(cvals.size()>0 && cvals.find(ano)!=cvals.end())
 	{
 		int cv = (node->children[0])->cv;
-		int val = stringToInt(test[ano]);
+		int val;
+		if(test[ano]=="?") val=((test[test.size()-1][0]=='>')?node->missing.second:node->missing.first);
+		else val = stringToInt(test[ano]);
 		if(val<=cv)
 		{
 			return predict(test,node->children[0]);
@@ -737,7 +582,9 @@ bool Tree::predict(vector<string> &test, Treenode* node)
 		return predict(test,node->children[1]);
 	}
 	set<string>::iterator it = avals[ano].begin();
-	int ind = distance(it,avals[ano].find(test[ano]));
+	int ind;
+	if(test[ano]=="?") ind=((test[test.size()-1][0]=='>')?node->missing.second:node->missing.first);
+	else ind = distance(it,avals[ano].find(test[ano]));
 	return predict(test,node->children[ind]);
 }
 
@@ -765,52 +612,38 @@ void Tree::runtest(string datafile)
 		vector<string> vals;
 		string temp="";
 		queue<string> wq;
-		bool flag = false;
 		for(i=0;i<size;i++)
 		{
 			if(line[i]==',')
 			{
-				if(temp.compare("?")==0)
-				{
-					temp="";
-					wq.push(line);
-					flag = true;
-					break;
-				}
-				else
-				{
-					vals.push_back(temp);
-					temp="";
-					i++;
-				}
+				vals.push_back(temp);
+				temp="";
+				i++;
 			}
 			else
 			{
 				temp.push_back(line[i]);
 			}
 		}
-		if(!flag)
+		vals.push_back(temp);
+		size=vals.size();
+		bool cl = true;
+		if(vals[size-1].compare("<=50K.")==0)
 		{
-			vals.push_back(temp);
-			size=vals.size();
-			bool cl = true;
-			if(vals[size-1].compare("<=50K.")==0)
-			{
-				cl = false;
-			}
-			vals.pop_back();
-			size--;
-			bool ans = predict(vals,this->root);
-			if(ans==cl)
-			{
-				correct++;
-			}
-			total++;
+			cl = false;
 		}
+		vals.pop_back();
+		size--;
+		bool ans = predict(vals,this->root);
+		if(ans==cl)
+		{
+			correct++;
+		}
+		total++;
 	}
 	ifil.close();
 	cout<<"Total data : "<<total<<", Correct : "<<correct<<endl;
-	cout<<"Accuracy: "<<((correct*1.0)/total)<<endl;
+	cout<<"Accuracy: "<<((correct*100.0)/total)<<"%"<<endl;
 }
 
 Tree::~Tree()

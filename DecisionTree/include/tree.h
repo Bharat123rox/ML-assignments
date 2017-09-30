@@ -18,8 +18,8 @@ class Tree
 		void loadTrainingData(std::string datafile,int no_of_atb);
 		void loadDomainKnowledge(std::string datafile);
 		int stringToInt(std::string str);
-		std::pair<long double,int> splitContinuous(Treenode* node,int ano);
-		long double splitDiscrete(Treenode* node,int ano);
+		std::pair<long double,int> splitContinuous(Treenode* node,int ano, std::pair<int,int>&);
+		long double splitDiscrete(Treenode* node,int ano, std::pair<int,int>&);
 		long double getEntropy(int npos,int nneg);
 		std::string intToString(int no);
 		void printData();

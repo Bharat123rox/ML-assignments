@@ -6,7 +6,6 @@ using namespace std;
 
 int main()
 {
-	srand(time(NULL));
 	Tree t("../raw_data/data.csv","../data/description.txt");
 	t.runtest("../raw_data/testdata.csv");
 	PrunedTree p("../raw_data/data.csv","../data/description.txt");

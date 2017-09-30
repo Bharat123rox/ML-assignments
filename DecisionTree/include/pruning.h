@@ -10,7 +10,6 @@ using namespace std;
 struct pnode
 {
 	ll tpos, tneg, pos, neg, correct;
-	bool pruned;
 	std::vector<pnode*> children;
 	pnode();
 	~pnode();

@@ -61,55 +61,41 @@ void RandomForest::runtest(string datafile)
 		vector<string> vals;
 		string temp="";
 		queue<string> wq;
-		bool flag = false;
 		for(i=0;i<size;i++)
 		{
 			if(line[i]==',')
 			{
-				if(temp.compare("?")==0)
-				{
-					temp="";
-					wq.push(line);
-					flag = true;
-					break;
-				}
-				else
-				{
-					vals.push_back(temp);
-					temp="";
-					i++;
-				}
+				vals.push_back(temp);
+				temp="";
+				i++;
 			}
 			else
 			{
 				temp.push_back(line[i]);
 			}
 		}
-		if(!flag)
+		vals.push_back(temp);
+		size=vals.size();
+		bool cl = true;
+		if(vals[size-1].compare("<=50K.")==0)
 		{
-			vals.push_back(temp);
-			size=vals.size();
-			bool cl = true;
-			if(vals[size-1].compare("<=50K.")==0)
-			{
-				cl = false;
-			}
-			vals.pop_back();
-			size--;
-			int sz = this->trees.size(), pp=0, nn=0;
-			for(auto tr:trees){
-				bool val = tr->predict(vals,tr->root);
-				if(val) pp++;
-				else nn++;
-			}
-			if((pp>=nn)==cl)
-			{
-				correct++;
-			}
-			total++;
+			cl = false;
 		}
+		vals.pop_back();
+		size--;
+		int sz = this->trees.size(), pp=0, nn=0;
+		for(auto tr:trees){
+			bool val = tr->predict(vals,tr->root);
+			if(val) pp++;
+			else nn++;
+		}
+		if((pp>=nn)==cl)
+		{
+			correct++;
+		}
+		total++;
 	}
 	ifil.close();
 	cout<<"Total data : "<<total<<", Correct : "<<correct<<endl;
-	cout<<"Accuracy: "<<((correct*1.0)/total)<<endl;
+	cout<<"Accuracy: "<<((correct*100.0)/total)<<"%"<<endl;
 }

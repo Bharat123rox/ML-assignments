@@ -6,7 +6,6 @@ using namespace std;
 pnode::pnode()
 {
 	tpos=tneg=pos=neg=correct=0;
-	pruned = false;
 	children.clear();
 }
 
@@ -46,7 +45,9 @@ int PrunedTree::assign_testdata(pnode*& pn, Treenode* tn, vector<string>& td)
 	if(this->tree->cvals.size()>0 && this->tree->cvals.find(ano)!=this->tree->cvals.end())
 	{
 		int cv = (tn->children[0])->cv;
-		int val = this->tree->stringToInt(td[ano]);
+		int val;
+		if(td[ano]=="?") val=((td[td.size()-1][0]=='>')?tn->missing.second:tn->missing.first);
+		else val=this->tree->stringToInt(td[ano]);
 		bool ret;
 		if(val<=cv) ret = assign_testdata(pn->children[0], tn->children[0], td);
 		else ret = assign_testdata(pn->children[1], tn->children[1], td);
@@ -54,7 +55,9 @@ int PrunedTree::assign_testdata(pnode*& pn, Treenode* tn, vector<string>& td)
 		return ret;
 	}
 	set<string>::iterator it = this->tree->avals[ano].begin();
-	int ind = distance(it,this->tree->avals[ano].find(td[ano]));
+	int ind;
+	if(td[ano]=="?") ind=((td[td.size()-1][0]=='>')?tn->missing.second:tn->missing.first);
+	else ind = distance(it,this->tree->avals[ano].find(td[ano]));
 	bool ret=assign_testdata(pn->children[ind], tn->children[ind], td);
 	pn->correct+=ret;
 	return ret;
