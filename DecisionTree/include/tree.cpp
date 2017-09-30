@@ -381,6 +381,17 @@ void Tree::makeTree(Treenode* node)
 		node->setAno(-1);
 		return;
 	}
+	auto tmpaset=node->aset;
+	if(rf){
+		//In case the decision tree is a random forest, we take a random subset of attributes.
+		int sz = node->aset.size();
+		sz = int(sqrt(sz));
+		vector<int> tmpv;
+		for(auto qq: node->aset) tmpv.push_back(qq);
+		random_shuffle(tmpv.begin(),tmpv.end());
+		node->aset.clear();
+		for(int i=0;i<sz;i++) node->aset.insert(tmpv[i]);
+	}
 	set<int>::iterator it = node->aset.begin();
 	long double igmax = -1;
 	int nt=0;
@@ -390,15 +401,11 @@ void Tree::makeTree(Treenode* node)
 	pair<int,int> tmpm;
 	while(it!=node->aset.end())
 	{
-		//cout<<it->first<<endl;
 		if(cvals.size()>0 && cvals.find(*it)!=cvals.end())
 		{
-			//cout<<*it<<" continuous \n";
-			//cout<<"idhar"<<endl;
 			//continuous valued attributes, calculating igmax for split.
 			pair<long double,int> val = splitContinuous(node,*it, tmpm); //splitContinuous returns igmax
 			long double ig = val.first;
-			//cout<<nt<<" "<<ig<<endl;
 			if(ig>=igmax)
 			{
 				ff=true;
@@ -410,8 +417,6 @@ void Tree::makeTree(Treenode* node)
 		}
 		else
 		{
-			//cout<<*it<<" discrete\n";
-			//cout<<"udhar"<<endl;
 			long double val = splitDiscrete(node,*it, tmpm);
 			if(val>igmax)
 			{
@@ -430,6 +435,7 @@ void Tree::makeTree(Treenode* node)
 	//cout<<node->getAno()<<endl;
 	int i,j,size;
 	int ano = node->getAno();
+	node->aset = tmpaset;
 	node->aset.erase(ano);
 	if(rf && !(node->aset.empty()))
 	{

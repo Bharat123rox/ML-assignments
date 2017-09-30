@@ -4,6 +4,7 @@ using namespace std;
 
 RandomForest::RandomForest(string trainingdata, string domknow)
 {
+	//Initialize the data after extraction.
 	Tree* t = new Tree();
 	t->loadDomainKnowledge(domknow);
 	t->loadTrainingData(trainingdata, t->atbno);
@@ -17,6 +18,7 @@ RandomForest::RandomForest(string trainingdata, string domknow)
 
 void RandomForest::build()
 {
+	//Builds sqrt(n) decision trees using sqrt(n) random training sets where n=size of total training data
 	int sz = tdata.size(),totsz;
 	totsz = sz;
 	sz = int(sqrt(sz+1));
@@ -39,9 +41,9 @@ void RandomForest::build()
 
 void RandomForest::runtest(string datafile)
 {
+	//Reads the test data and calculates accuracy.
 	int i,j,size;
 	size = datafile.length();
-	//cout<<datafile<<endl;
 	char* buff = new char[size+1];
 	for(i=0;i<size;i++)
 	{

@@ -17,6 +17,7 @@ pnode::~pnode()
 
 void PrunedTree::traverse(pnode*& pn, Treenode* tn)
 {
+	//Assigns extra data for every decision tree node.
 	pn=new pnode;
 	pn->pos=tn->pos;
 	pn->neg=tn->neg;
@@ -27,6 +28,7 @@ void PrunedTree::traverse(pnode*& pn, Treenode* tn)
 
 int PrunedTree::assign_testdata(pnode*& pn, Treenode* tn, vector<string>& td)
 {
+	//Runs each test data from validation set and calculates correct, tneg and tpos.
 	if(td[td.size()-1][0]=='<') pn->tneg++;
 	else pn->tpos++;
 	if(tn->getAno()==-1 || tn->pos==0 || tn->neg==0)
@@ -65,6 +67,7 @@ int PrunedTree::assign_testdata(pnode*& pn, Treenode* tn, vector<string>& td)
 
 void PrunedTree::prune(pnode*& pn, Treenode*& tn)
 {
+	//Performs pruning by removing nodes in a bottom up fashion and recording change in accuracy.
 	if(pn->children.empty()) return;
 	for(ll i=0;i<tn->children.size();++i) prune(pn->children[i], tn->children[i]);
 	pn->correct = 0;
@@ -72,7 +75,7 @@ void PrunedTree::prune(pnode*& pn, Treenode*& tn)
 	int newc=0;
 	if(pn->pos<pn->neg) newc=pn->tneg;
 	else newc=pn->tpos;
-	if(newc>=pn->correct){
+	if(newc>=pn->correct){			//Node's children are removed if new accuracy > existing accuracy.
 		pn->correct = newc;
 		pn->children.clear();
 		tn->children.clear();
@@ -83,6 +86,7 @@ void PrunedTree::prune(pnode*& pn, Treenode*& tn)
 
 PrunedTree::PrunedTree(string trainingdata, string domknow)
 {
+	//Accepts data and builds pruned decision tree.
 	tree = new Tree();
 	tree->loadDomainKnowledge(domknow);
 	tree->loadTrainingData(trainingdata,tree->atbno);
@@ -90,6 +94,7 @@ PrunedTree::PrunedTree(string trainingdata, string domknow)
 	vector<int> tmpvec;
 	auto t2 = tree->tdata;
 	tree->tdata.clear();
+	//training data further split randomly, 2/3-new training set and 1/3-validation set.
 	for(int i=0;i<sz;i++) tmpvec.push_back(i);
 	random_shuffle(tmpvec.begin(), tmpvec.end());
 	int i=0;
@@ -101,9 +106,6 @@ PrunedTree::PrunedTree(string trainingdata, string domknow)
 	t2.clear();
 	tree->setrootNode();
 	tree->makeTree(tree->getrootNode());
-	//cerr<<"Hello "<<tree->tdata.size()<<" "<<data.size()<<"\n";
-	//data = newVec(tree->tdata.begin(), tree->tdata.begin()+(int(tree->tdata.size()/3)));
-	//data = get_testdata(datafile);*/
 	traverse(this->proot, tree->getrootNode());
 	tot=0;
 	correct=0;
@@ -122,5 +124,6 @@ PrunedTree::~PrunedTree()
 
 void PrunedTree::runtest(string datafile)
 {
+	//Runs test data and calculates accuracy.
 	this->tree->runtest(datafile);
 }
