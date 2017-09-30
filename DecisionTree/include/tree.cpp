@@ -135,7 +135,7 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 {
 	ifstream ifil;
 	int i,j,size;
-	queue<string> wq;
+	queue<data_ds> wq;
 	size = datafile.length();
 	char* buff = new char[size+1];
 	for(i=0;i<size;i++)
@@ -188,10 +188,7 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 			{
 				if(temp.compare("?")==0)
 				{
-					wq.push(line);
 					flag=true;
-					temp="";
-					break;
 				}
 				vals.push_back(temp);
 				temp="";
@@ -204,10 +201,10 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 		}
 		if(!flag)
 		{
-			vals.push_back(temp);
+			//vals.push_back(temp);
 			size = vals.size();
 			ds.key = vals;
-			if(vals[size-1].compare("<=50K")==0)
+			if(temp.compare("<=50K")==0)
 			{
 				ds.val=false;
 			}
@@ -262,6 +259,21 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 			}
 			tdata.push_back(ds);
 		}
+		else
+		{
+			//vals.push_back(temp);
+			size = vals.size();
+			if(temp.compare("<=50K")==0)
+			{
+				ds.val=false;
+			}
+			else
+			{
+				ds.val=true;
+			}
+			ds.key = vals;
+			wq.push(ds);
+		}
 		//cout<<lno<<endl;
 	}
 	//cout<<"done"<<endl;
@@ -274,6 +286,7 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 		ncvals[i] = floor((ncvals[i]*1.00000/nneg)+0.5);
 		//cout<<i<<" "<<pcvals[i]<<" "<<ncvals[i]<<endl;
 	}
+	size=atbno;
 	for(i=0;i<size;i++)
 	{
 		if(cvals.find(i)==cvals.end())
@@ -287,77 +300,74 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 		if(cvals.find(i)==cvals.end())
 		{
 			int lls = avals[i].size();
-			for(j=1;j<size;j++)
+			for(j=1;j<lls;j++)
 			{
 				pdf[i][j].second=pdf[i][j-1].second+pdf[i][j].second;
 				ndf[i][j].second=ndf[i][j-1].second+ndf[i][j].second;	
 			}
 		}
 	}
-	/*while(!wq.empty())
+	while(!wq.empty())
 	{
-		line = wq.front();
+		data_ds ds = wq.front();
 		wq.pop();
-		size = line.length();
-		vector<string> vals;
-		string temp="";
+		size = atbno;
 		for(i=0;i<size;i++)
 		{
-			if(line[i]==',')
+			if(ds.key[i].compare("?")==0)
 			{
-				j=i+1;
-			}
-		}
-		bool flag = false;
-		while(j<size)
-		{
-			temp.push_back(j);
-			j++;
-		}
-		if(temp.compare(">50K.")==0)
-		{
-			flag = true;
-		}
-		temp="";
-		for(i=0;i<size;i++)
-		{
-			if(line[i]==',')
-			{
-				if(temp.compare("?")==0)
+				if(cvals.find(i)!=cvals.end())
 				{
-					if(cvals.find(i)!=cvals.end())
+					if(ds.val==false)
 					{
-						if(flag)
+						ds.key[i] = intToString(ncvals[i]);
+					}
+					else
+					{
+						ds.key[i] = intToString(pcvals[i]);
+					}
+				}
+				else
+				{
+					int lls = avals[i].size();
+					int mval=0;
+					if(ds.val==false)
+					{
+						mval=ndf[i][lls-1].second+1;
+						int rno = rand()%mval;
+						for(j=0;j<lls;j++)
 						{
-							temp=intToString(pcvals[i]);
-						}
-						else
-						{
-							temp=intToString(ncvals[i]);
+							if(ndf[i][j].second>=rno)
+							{
+								ds.key[i] = ndf[i][j].first;
+								break;
+							}
 						}
 					}
 					else
 					{
-						if(flag)
+						mval=pdf[i][lls-1].second+1;
+						int rno=rand()%mval;
+						for(j=0;j<lls;j++)
 						{
-							int lls = 
-						}
-						else
-						{
-
+							if(pdf[i][j].second>=rno)
+							{
+								ds.key[i] = pdf[i][j].first;
+								break;
+							}
 						}
 					}
 				}
-				vals.push_back(temp);
-				temp="";
-				i++;
-			}
-			else
-			{
-				temp.push_back(line[i]);
 			}
 		}
-	}*/
+		size = ds.key.size();
+		/*for(i=0;i<size;i++)
+		{
+			cout<<ds.key[i]<<" ";
+		}
+		cout<<ds.val<<endl;*/
+		tdata.push_back(ds);
+	}
 }
 
 void Tree::printData()

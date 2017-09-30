@@ -5,17 +5,18 @@ using namespace std;
 
 int main()
 {
+	srand(time(NULL));
 	Tree tree;
-	tree.loadDomainKnowledge("C:/Users/vThejas/Documents/Github/ML-assignments/DecisionTree/data/description.txt");
-	tree.loadTrainingData("C:/Users/vThejas/Documents/Github/ML-assignments/DecisionTree/raw_data/data.csv",tree.atbno);
+	tree.loadDomainKnowledge("/home/nitish/Documents/ML/ML-assignments/DecisionTree/data/description.txt");
+	tree.loadTrainingData("/home/nitish/Documents/ML/ML-assignments/DecisionTree/raw_data/data.csv",tree.atbno);
 	int i,size=0;
 	tree.setrootNode();
 	//tree.printData();
 	tree.makeTree(tree.getrootNode());
 	cout<<"sfggff\n";
 	//tree.traverse(tree.getrootNode());
-	tree.runtest("C:/Users/vThejas/Documents/Github/ML-assignments/DecisionTree/raw_data/testdata.csv");
-	PrunedTree* pq=new PrunedTree(tree, "C:/Users/vThejas/Documents/Github/ML-assignments/DecisionTree/raw_data/testdata.csv");
-	pq->tree.runtest("C:/Users/vThejas/Documents/Github/ML-assignments/DecisionTree/raw_data/testdata.csv");
+	tree.runtest("/home/nitish/Documents/ML/ML-assignments/DecisionTree/raw_data/testdata.csv");
+	PrunedTree* pq=new PrunedTree(tree, "/home/nitish/Documents/ML/ML-assignments/DecisionTree/raw_data/testdata.csv");
+	pq->tree.runtest("/home/nitish/Documents/ML/ML-assignments/DecisionTree/raw_data/testdata.csv");
 	return 0;
 }
