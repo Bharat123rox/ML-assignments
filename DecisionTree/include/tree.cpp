@@ -1,7 +1,4 @@
 #include "tree.h"
-#include <fstream>
-#include <queue>
-#include <iterator>
 #define ll long long int
 using namespace std;
 
@@ -11,6 +8,20 @@ Tree::Tree()
 	this->tdata.clear();
 	this->avals.clear();
 	this->avals.clear();
+	this->rf = false;
+}
+
+Tree::Tree(string trainingdata, string domknow)
+{
+	this->root = NULL;
+	this->tdata.clear();
+	this->avals.clear();
+	this->avals.clear();
+	this->rf = false;
+	loadDomainKnowledge(domknow);
+	loadTrainingData(trainingdata, atbno);
+	setrootNode();
+	makeTree(getrootNode());
 }
 
 bool compare(pair<int,bool> p1,pair<int,bool> p2)
@@ -582,6 +593,16 @@ void Tree::makeTree(Treenode* node)
 	int i,j,size;
 	int ano = node->getAno();
 	node->aset.erase(ano);
+	if(rf && !(node->aset.empty()))
+	{
+		int sz = node->aset.size();
+		sz = int(sqrt(sz+1));
+		vector<int> tmpv;
+		for(auto qq: node->aset) tmpv.push_back(qq);
+		random_shuffle(tmpv.begin(),tmpv.end());
+		node->aset.clear();
+		for(int i=0;i<sz;i++) node->aset.insert(tmpv[i]);
+	}
 	size=node->data.size();
 	it = node->aset.begin();
 	if(cvals.size()>0 && cvals.find(ano)!=cvals.end())
@@ -789,6 +810,7 @@ void Tree::runtest(string datafile)
 	}
 	ifil.close();
 	cout<<"Total data : "<<total<<", Correct : "<<correct<<endl;
+	cout<<"Accuracy: "<<((correct*1.0)/total)<<endl;
 }
 
 Tree::~Tree()
@@ -798,3 +820,4 @@ Tree::~Tree()
 	this->avals.clear();
 	delete this->root;
 }
+

@@ -1,4 +1,3 @@
-#include <bits/stdc++.h>
 #include "pruning.h"
 
 #define ll long long int
@@ -15,63 +14,6 @@ pnode::~pnode()
 {
 	if(!children.empty()) for(auto ch:children) delete ch;
 	if(!children.empty()) children.clear();
-}
-
-vector< vector<string> > PrunedTree::get_testdata(string datafile)
-{
-	int i,j,size;
-	size = datafile.length();
-	char* buff = new char[size+1];
-	vector< vector<string> > ret;
-	for(i=0;i<size;i++)
-	{
-		buff[i] = datafile[i];
-	}
-	buff[i]='\0';
-	ifstream ifil;
-	string line;
-	int total=0;
-	int correct=0;
-	ifil.open(buff,std::fstream::in);
-	while(!ifil.eof())
-	{
-		getline(ifil,line);
-		size = line.length();
-		vector<string> vals;
-		string temp="";
-		queue<string> wq;
-		bool flag = false;
-		for(i=0;i<size;i++)
-		{
-			if(line[i]==',')
-			{
-				if(temp.compare("?")==0)
-				{
-					temp="";
-					wq.push(line);
-					flag = true;
-					break;
-				}
-				else
-				{
-					vals.push_back(temp);
-					temp="";
-					i++;
-				}
-			}
-			else
-			{
-				temp.push_back(line[i]);
-			}
-		}
-		if(!flag)
-		{
-			vals.push_back(temp);
-			ret.push_back(vals);
-		}
-	}
-	ifil.close();
-	return ret;
 }
 
 void PrunedTree::traverse(pnode*& pn, Treenode* tn)
@@ -101,18 +43,18 @@ int PrunedTree::assign_testdata(pnode*& pn, Treenode* tn, vector<string>& td)
 		return 0;
 	}
 	int ano = tn->getAno();
-	if(this->tree.cvals.size()>0 && this->tree.cvals.find(ano)!=this->tree.cvals.end())
+	if(this->tree->cvals.size()>0 && this->tree->cvals.find(ano)!=this->tree->cvals.end())
 	{
 		int cv = (tn->children[0])->cv;
-		int val = this->tree.stringToInt(td[ano]);
+		int val = this->tree->stringToInt(td[ano]);
 		bool ret;
 		if(val<=cv) ret = assign_testdata(pn->children[0], tn->children[0], td);
 		else ret = assign_testdata(pn->children[1], tn->children[1], td);
 		pn->correct+=ret;
 		return ret;
 	}
-	set<string>::iterator it = this->tree.avals[ano].begin();
-	int ind = distance(it,this->tree.avals[ano].find(td[ano]));
+	set<string>::iterator it = this->tree->avals[ano].begin();
+	int ind = distance(it,this->tree->avals[ano].find(td[ano]));
 	bool ret=assign_testdata(pn->children[ind], tn->children[ind], td);
 	pn->correct+=ret;
 	return ret;
@@ -136,29 +78,46 @@ void PrunedTree::prune(pnode*& pn, Treenode*& tn)
 	return;	
 }
 
-PrunedTree::PrunedTree(Tree& t, string datafile)
+PrunedTree::PrunedTree(string trainingdata, string domknow)
 {
-	this->tree=t;
-	data = get_testdata(datafile);
-	traverse(this->proot, t.getrootNode());
+	tree = new Tree();
+	tree->loadDomainKnowledge(domknow);
+	tree->loadTrainingData(trainingdata,tree->atbno);
+	int sz = tree->tdata.size();
+	vector<int> tmpvec;
+	auto t2 = tree->tdata;
+	tree->tdata.clear();
+	for(int i=0;i<sz;i++) tmpvec.push_back(i);
+	random_shuffle(tmpvec.begin(), tmpvec.end());
+	int i=0;
+	for(;i<=((2*sz)/3);i++) tree->tdata.push_back(t2[tmpvec[i]]);
+	for(;i<sz;i++){
+		t2[tmpvec[i]].key.push_back(((t2[tmpvec[i]].val)?">50k":"<=50k"));
+		data.push_back(t2[tmpvec[i]].key);
+	}
+	t2.clear();
+	tree->setrootNode();
+	tree->makeTree(tree->getrootNode());
+	//cerr<<"Hello "<<tree->tdata.size()<<" "<<data.size()<<"\n";
+	//data = newVec(tree->tdata.begin(), tree->tdata.begin()+(int(tree->tdata.size()/3)));
+	//data = get_testdata(datafile);*/
+	traverse(this->proot, tree->getrootNode());
 	tot=0;
 	correct=0;
-	cout<<proot->pos<<" "<<proot->neg<<endl;
 	for(auto td: data){
 		tot++;
-		correct+=assign_testdata(proot, t.getrootNode(), td);
+		correct+=assign_testdata(proot, tree->getrootNode(), td);
 	}
 	data.clear();
-	prune(proot, this->tree.root);
-	cout<<this->tree.root->getAno()<<endl;
-}
-
-long double PrunedTree::getAccuracy()
-{
-	return ((long double)(proot->correct))/tot;
+	prune(proot, this->tree->root);
 }
 
 PrunedTree::~PrunedTree()
 {
 	delete proot;
+}
+
+void PrunedTree::runtest(string datafile)
+{
+	this->tree->runtest(datafile);
 }

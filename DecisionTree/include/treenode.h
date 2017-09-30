@@ -1,16 +1,8 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <cmath>
-#include <set>
-#include <map>
-#include <ctime>
-#define ll long long int 
 #ifndef TREENODE_H
 #define TREENODE_H
+
+#include <bits/stdc++.h>
+#define ll long long int 
 
 struct data_ds
 {

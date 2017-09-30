@@ -1,13 +1,17 @@
-#include "tree.cpp"
-#define ll long long int
 #ifndef PRUNING_H
 #define PRUNING_H
+
+#include <bits/stdc++.h>
+#include "tree.cpp"
+#define ll long long int
+
+using namespace std;
 
 struct pnode
 {
 	ll tpos, tneg, pos, neg, correct;
 	bool pruned;
-	vector<pnode*> children;
+	std::vector<pnode*> children;
 	pnode();
 	~pnode();
 };
@@ -15,16 +19,15 @@ struct pnode
 class PrunedTree
 {
 	public:
-	Tree tree;
+	Tree* tree;
 	pnode* proot;
 	ll tot, correct;
 	std::vector< std::vector<std::string> > data;
 	void traverse(pnode*&, Treenode*);
-	std::vector< std::vector<std::string> > get_testdata(std::string);
 	int assign_testdata(pnode*&, Treenode*, vector<string>&);
 	void prune(pnode*&, Treenode*&);
-	PrunedTree(Tree&, std::string);
-	long double getAccuracy();
+	PrunedTree(std::string, std::string);
+	void runtest(std::string);
 	~PrunedTree();
 };
 

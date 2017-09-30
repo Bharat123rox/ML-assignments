@@ -1,7 +1,9 @@
-#include "treenode.cpp"
-#define ll long long int
 #ifndef TREE_H
 #define TREE_H
+
+#include <bits/stdc++.h>
+#include "treenode.cpp"
+#define ll long long int
 
 class Tree
 {
@@ -10,6 +12,7 @@ class Tree
 		Tree();
 		std::vector< data_ds > tdata;
 		int atbno;
+		bool rf;
 		std::map<int,std::set<std::string> > avals; //Storing the possible values of an attribute (index of attrb is map's key)
 		std::set<int> cvals; //stores the index of attibutes with continuous values.
 		void loadTrainingData(std::string datafile,int no_of_atb);
@@ -27,6 +30,7 @@ class Tree
 		bool predict(std::vector<std::string> &test,Treenode* node);
 		void runtest(std::string datafile);
 		Treenode* getrootNode();
+		Tree(std::string, std::string);
 		~Tree();
 };
 
