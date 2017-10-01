@@ -32,4 +32,6 @@
 *.app
 
 #Specific files
+CandidateConfig
+DecisionConfig
 Candidate/reader.cpp
