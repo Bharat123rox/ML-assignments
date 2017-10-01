@@ -2,6 +2,7 @@
 #define ll long long int
 using namespace std;
 
+// Non-parameterized constructor, initializes root to NULL, clears data associated with tree.
 Tree::Tree()
 {
 	this->root = NULL;
@@ -11,6 +12,11 @@ Tree::Tree()
 	this->rf = false;
 }
 
+/**********************************************************
+------ Parameterized constructor. Takes the filenames 
+having training data and data description as parameters,
+and constructs the Decision tree----------------------------
+************************************************************/
 Tree::Tree(string trainingdata, string domknow)
 {
 	this->root = NULL;
@@ -34,6 +40,7 @@ bool compare2(pair<string,int>p1, pair<string,int> p2)
 	return p1.second<p2.second;
 }
 
+//converts an integer into std::string
 string Tree::intToString(int no)
 {
 	string ans="";
@@ -54,6 +61,7 @@ string Tree::intToString(int no)
 	return ans;
 }
 
+//converts a string with numeric characters into an integer
 int Tree::stringToInt(string str)
 {
 	int i;
@@ -69,6 +77,10 @@ int Tree::stringToInt(string str)
 	return ans;
 }
 
+/************************************************************
+ ------Returns the entropy of a dataset, accepting the number
+ of positive and negative target values as parameters-------
+*************************************************************/
 long double Tree::getEntropy(int npos,int nneg)
 {
 	int ntot = npos + nneg;
@@ -187,6 +199,7 @@ void Tree::loadTrainingData(string datafile,int no_of_atb)
 	ifil.close();
 }
 
+// to check if data has been read from file properly
 void Tree::printData()
 {
 	int i,size,j;
@@ -221,6 +234,12 @@ void Tree::printinfo()
 	}
 }
 
+/********************************************************************
+ ------Handles Continuous valued attributes.
+ Calculates the continuous value x that splits the node->data into
+ two, with <=x and >x values for the attibute, that produces maximum
+ information gain. It also returns this maximum value. (std::pair).--
+ ********************************************************************/
 pair<long double,int> Tree::splitContinuous(Treenode* node,int ano, pair<int,int>& missing)
 {
 	int i,size;
@@ -298,6 +317,10 @@ pair<long double,int> Tree::splitContinuous(Treenode* node,int ano, pair<int,int
 	return make_pair(igmax,mval);
 }
 
+/********************************************************************
+ ------Calculates the information gain for attributes with finite 
+ number of discrete values. Missing values are also taken care of--
+ ********************************************************************/
 long double Tree::splitDiscrete(Treenode* node,int ano, pair<int,int>& missing)
 {
 	int i,j,size;
@@ -362,6 +385,8 @@ Treenode* Tree::getrootNode()
 	return this->root;
 }
 
+
+// Intializing the root node with training data in Tree::tdata and the set of remaining attributes.
 void Tree::setrootNode()
 {
 	root = new Treenode();
@@ -374,10 +399,16 @@ void Tree::setrootNode()
 	root->setData(this->tdata);
 }
 
+
+/******************************************************************************
+-------Routine to construct the Decision Tree from a Treenode.----------------
+*****************************************************************************/
 void Tree::makeTree(Treenode* node)
 {
 	if(node->pos==0 || node->neg==0 || node->aset.size()==0 || node->data.size()==0)
 	{
+		/*Terminating condition. If node->data has only positive examples or only
+		negative examples or has covered all attributes starting from root node.*/
 		node->setAno(-1);
 		return;
 	}
@@ -399,6 +430,8 @@ void Tree::makeTree(Treenode* node)
 	int splitval=-1;
 	bool ff = false;
 	pair<int,int> tmpm;
+
+	/*Checking the information gain obtained from each of the remaining attriubtes*/
 	while(it!=node->aset.end())
 	{
 		if(cvals.size()>0 && cvals.find(*it)!=cvals.end())
@@ -429,9 +462,7 @@ void Tree::makeTree(Treenode* node)
 		it++;
 		nt++;
 	}
-	//cout<<endl;
-	//cout<<"Chosen "<<chosenOne<<endl;
-	node->setAno(chosenOne);
+	node->setAno(chosenOne); //attribute index with maximum information gain assigned to node.
 	//cout<<node->getAno()<<endl;
 	int i,j,size;
 	int ano = node->getAno();
@@ -439,6 +470,7 @@ void Tree::makeTree(Treenode* node)
 	node->aset.erase(ano);
 	if(rf && !(node->aset.empty()))
 	{
+		// For random forests. number of remaining attributes reduced square root of its original value.
 		int sz = node->aset.size();
 		sz = int(sqrt(sz+1));
 		vector<int> tmpv;
@@ -451,6 +483,7 @@ void Tree::makeTree(Treenode* node)
 	it = node->aset.begin();
 	if(cvals.size()>0 && cvals.find(ano)!=cvals.end())
 	{
+		// In case of continuous valued attributes, no. of children=2.
 		node->children.resize(2);
 		node->children[0] = new Treenode();
 		node->children[1] = new Treenode();
@@ -484,6 +517,7 @@ void Tree::makeTree(Treenode* node)
 	}
 	else
 	{
+		// No of children nodes = no. of possible values the node->ano index attribute can take. 
 		size=avals[ano].size();
 		//cout<<size<<" "<<ano<<endl;
 		node->children.resize(size);
@@ -494,7 +528,6 @@ void Tree::makeTree(Treenode* node)
 			(node->children[i])->aset=node->aset;
 		}
 		size=node->data.size();
-		//cout<<"These: "<<ano<<" "<<size<<endl;
 		for(i=0;i<size;i++)
 		{
 
@@ -512,7 +545,6 @@ void Tree::makeTree(Treenode* node)
 				(node->children[ind])->pos++;
 			}
 		}
-		//cout<<"hello"<<endl;
 	}
 	//cout<<"That: "<<node->aset.size()<<endl;
 	node->data.clear();
@@ -524,6 +556,7 @@ void Tree::makeTree(Treenode* node)
 	}
 }
 
+// Depth first traversal on Decision Tree.
 void Tree::traverse(Treenode* node)
 {
 	if(node->getAno()==-1 || node->pos==0 || node->neg==0 )
@@ -561,6 +594,11 @@ void Tree::traverse(Treenode* node)
 	}
 }
 
+/******************************************************************************
+---------------Routine to predict the target of a single instance of test data
+Traversal through the tree is based on the attribute values the input data
+(test parameter).------------------------------------------------------------
+*****************************************************************************/
 bool Tree::predict(vector<string> &test, Treenode* node)
 {
 	if(node->getAno()==-1 || node->pos==0 || node->neg==0)
@@ -594,6 +632,7 @@ bool Tree::predict(vector<string> &test, Treenode* node)
 	return predict(test,node->children[ind]);
 }
 
+// To check accuracy, precision, recall, F-measure with a test dataset.
 void Tree::runtest(string datafile)
 {
 	int i,j,size;
@@ -609,6 +648,9 @@ void Tree::runtest(string datafile)
 	string line;
 	int total=0;
 	int correct=0;
+	int classified_positive=0;
+	int target_positive=0;
+	int correct_classified_positive=0;
 	ifil.open(buff,std::fstream::in);
 	int ii=0;
 	while(!ifil.eof())
@@ -634,22 +676,37 @@ void Tree::runtest(string datafile)
 		vals.push_back(temp);
 		size=vals.size();
 		bool cl = true;
+		target_positive++;
 		if(vals[size-1].compare("<=50K.")==0)
 		{
 			cl = false;
+			target_positive--;
 		}
-		vals.pop_back();
 		size--;
 		bool ans = predict(vals,this->root);
+		if(ans==true)
+		{
+			classified_positive++;
+		}
 		if(ans==cl)
 		{
 			correct++;
+			if(ans==true)
+			{
+				correct_classified_positive++;
+			}
 		}
 		total++;
 	}
 	ifil.close();
+	long double precision = ((correct_classified_positive*1.0000)/classified_positive);
+	long double recall = ((correct_classified_positive*1.00000)/target_positive);
 	cout<<"Total data : "<<total<<", Correct : "<<correct<<endl;
 	cout<<"Accuracy: "<<((correct*100.0)/total)<<"%"<<endl;
+	cout<<"Precision: "<<precision<<endl;
+	cout<<"Recall: "<<recall<<endl;
+	long double fmeasure = (2*precision*recall)/(precision+recall);
+	cout<<"F-score: "<<fmeasure<<endl;
 }
 
 Tree::~Tree()

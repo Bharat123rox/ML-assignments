@@ -1,6 +1,7 @@
 #include "treenode.h"
 #define ll long long int
 
+// non parameterized constructor to initialize data members.
 Treenode::Treenode()
 {
 	this->parent = NULL;
@@ -16,6 +17,7 @@ std::vector< data_ds > Treenode::getData()
 	return this->data;
 }
 
+// sets this->data to a vector<data_ds> and sets the number of positive and negative examples node->pos and node->neg.
 void Treenode::setData(std::vector< data_ds > &data)
 {
 	this->data = data;
@@ -66,6 +68,7 @@ void Treenode::setChildren(std::vector<Treenode* >children)
 	this->children = children;
 }
 
+// To free the heap memory allocated to each of its chlildren.
 Treenode::~Treenode()
 {
 	data.clear();

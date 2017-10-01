@@ -8,13 +8,13 @@
 class Tree
 {
 	public:
-		Treenode* root;
-		Tree();
-		std::vector< data_ds > tdata;
-		int atbno;
-		bool rf;
+		Treenode* root; //Reference to root node of decision tree
+		std::vector< data_ds > tdata; // To store the training data.
+		int atbno; // No. of attributes in the training data.
+		bool rf; // Is decision tree a part of random forest.
 		std::map<int,std::set<std::string> > avals; //Storing the possible values of an attribute (index of attrb is map's key)
 		std::set<int> cvals; //stores the index of attibutes with continuous values.
+		Tree();
 		void loadTrainingData(std::string datafile,int no_of_atb);
 		void loadDomainKnowledge(std::string datafile);
 		int stringToInt(std::string str);

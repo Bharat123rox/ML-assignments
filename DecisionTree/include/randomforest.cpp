@@ -54,6 +54,9 @@ void RandomForest::runtest(string datafile)
 	string line;
 	int total=0;
 	int correct=0;
+	int correct_classified_positive=0;
+	int target_pos=0;
+	int classified_pos=0;
 	ifil.open(buff,std::fstream::in);
 	int ii=0;
 	while(!ifil.eof())
@@ -79,11 +82,13 @@ void RandomForest::runtest(string datafile)
 		vals.push_back(temp);
 		size=vals.size();
 		bool cl = true;
+		target_pos++;
 		if(vals[size-1].compare("<=50K.")==0)
 		{
 			cl = false;
+			target_pos--;
 		}
-		vals.pop_back();
+		//vals.pop_back();
 		size--;
 		int sz = this->trees.size(), pp=0, nn=0;
 		for(auto tr:trees){
@@ -91,13 +96,27 @@ void RandomForest::runtest(string datafile)
 			if(val) pp++;
 			else nn++;
 		}
+		if(pp>=nn)
+		{
+			classified_pos++;
+		}
 		if((pp>=nn)==cl)
 		{
 			correct++;
+			if(pp>=nn)
+			{
+				correct_classified_positive++;
+			}
 		}
 		total++;
 	}
 	ifil.close();
+	long double precision = (correct_classified_positive*1.0000)/classified_pos;
+	long double recall = (correct_classified_positive*1.0000)/target_pos;
+	long double fmeasure = (2*precision*recall)/(precision+recall);
 	cout<<"Total data : "<<total<<", Correct : "<<correct<<endl;
 	cout<<"Accuracy: "<<((correct*100.0)/total)<<"%"<<endl;
+	cout<<"Precision: "<<precision<<endl;
+	cout<<"Recall: "<<recall<<endl;
+	cout<<"F-score: "<<fmeasure<<endl;
 }
