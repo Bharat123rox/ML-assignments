@@ -35,3 +35,4 @@
 CandidateConfig
 DecisionConfig
 Candidate/reader.cpp
+SentimentConfig
