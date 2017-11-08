@@ -18,7 +18,7 @@ class NaiveBayesClassifier
 	map<int, string> vocab;
 	map<int, int> p_wc, n_wc;
 
-	vector<instance> read_data(const string&);
+	vector<instance> read_data(const string&,bool);
 	void train();
 	pair<bool, bool> predict(const instance&);
 
@@ -28,7 +28,7 @@ class NaiveBayesClassifier
 	void evaluate(const string&);
 };
 
-vector<NaiveBayesClassifier::instance> NaiveBayesClassifier::read_data(const string& fl)
+vector<NaiveBayesClassifier::instance> NaiveBayesClassifier::read_data(const string& fl, bool binarize = false)
 {
 	vector<instance> ret;
 	ifstream in;
@@ -47,7 +47,8 @@ vector<NaiveBayesClassifier::instance> NaiveBayesClassifier::read_data(const str
 			if(pos == string::npos) break;
 			int val = atoi(tmp.substr(0, pos).c_str());
 			int cnt = atoi(tmp.substr(pos + 1).c_str());
-			inst.words[val] = cnt;
+			if(binarize) inst.words[val] = 1;
+			else inst.words[val] = cnt;
 		}
 		ret.push_back(inst);
 		if(tmp == "") break;
@@ -108,12 +109,24 @@ pair<bool, bool> NaiveBayesClassifier::predict(const NaiveBayesClassifier::insta
 void NaiveBayesClassifier::evaluate(const string& fl)
 {
 	auto data = read_data(fl);
-	int tot = 0;
+	int tot = 0,tp = 0,tn = 0,fn = 0,fp = 0;
 	for(auto inst : data){
 		auto ret = predict(inst);
-		if(ret.first == ret.second) tot++;
+		if(ret.first == ret.second) {
+			tot++;
+			if(ret.first) tp++;
+			else tn++;
+		}
+		else {
+			if(ret.first) fp++;
+			else fn++;
+		}
 	}
+	double precision = (1.0*tp)/(tp+fp), recall = (1.0*tp)/(tp+fn);
 	cout<< "Accuracy: " << (1.0*tot)/data.size() <<endl;
+	cout<< "Precision: " << precision <<endl;
+	cout<< "Recall: " << recall <<endl;
+	cout<< "F-Score: " << (2.0*precision*recall)/(precision+recall) <<endl;
 	return;
 }
 
