@@ -4,7 +4,7 @@ var indexSectionsWithContent =
   1: "in",
   2: "s",
   3: "emnprt",
-  4: "npstvw"
+  4: "mnpstvw"
 };
 
 var indexSectionNames =

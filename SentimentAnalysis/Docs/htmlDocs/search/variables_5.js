@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['words',['words',['../structNaiveBayesClassifier_1_1instance.html#a86712a73c813656e51694b164bf5c95a',1,'NaiveBayesClassifier::instance']]]
+  ['vocab',['vocab',['../classNaiveBayesClassifier.html#a3bb9909e0c3f38426c0e03a4569ca516',1,'NaiveBayesClassifier']]]
 ];

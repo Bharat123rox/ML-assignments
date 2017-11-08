@@ -81,7 +81,6 @@ class NaiveBayesClassifier
 	\fn read_data()
 	\brief Takes in a text file as input, parses it and converts it into a \'bag-of-words\' form.
 	\param fl The input text file
-	\param binarize If true, Binary Naive Bayes is implemented, else, only Naive Bayes is implemented.
 	\return The instance as a bag-of-words converted from the document.
 	\sa train(), predict(), evaluate()
 	 */
@@ -112,7 +111,7 @@ class NaiveBayesClassifier
      \fn NaiveBayesClassifier()
      \param tr_data_file The text file consisting of training documents from the dataset.
      \param vocab_file The vocabulary file consisting of all distinct words in the dataset. 
-     \param mode (Non binary (false) or binary (true) Naive Bayes Algorithm)
+     \param mode (If false, Non-Binary or if true, Binary Naive Bayes Algorithm)
      \sa read_data(), train(), predict(), evaluate()
      */
 
@@ -227,7 +226,7 @@ void NaiveBayesClassifier::evaluate(const string& fl)
 
 int main()
 {
-	NaiveBayesClassifier n("train.txt", "vocab.txt",true);
+	NaiveBayesClassifier n("train.txt", "vocab.txt");
 	n.evaluate("test.txt");
 	return 0;
 }
