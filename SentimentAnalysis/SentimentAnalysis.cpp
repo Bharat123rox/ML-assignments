@@ -63,6 +63,7 @@ class NaiveBayesClassifier
 	 Represents all distinct set of words/vocabulary of the entire dataset.
 	 */
 	map<int, string> vocab;
+	map<string,int> invmap;
 	/*!
 	 \var p_wc
 	 Wordcount of positive words whose probabilities express positive sentiment in the document.
@@ -170,12 +171,17 @@ void NaiveBayesClassifier::train()
 
 NaiveBayesClassifier::NaiveBayesClassifier(const string& tr_data_file, const string& vocab_file, bool mode = false, const string& sw = "")
 {
-	ifstream in; 
-	in.open(vocab_file.c_str());
 	string tmp;
+	ifstream in;
+	in.open(vocab_file.c_str());
 	this -> mode = mode;
 	int cur = 0;
-	while(in >> tmp) vocab[cur++] = tmp;
+	while(in >> tmp) 
+	{	
+		vocab[cur] = tmp;
+		invmap[tmp] = cur;
+		cur++;
+	}
 	in.close();
 	auto data = read_data(tr_data_file);
 	for(auto inst : data){
@@ -189,6 +195,20 @@ NaiveBayesClassifier::NaiveBayesClassifier(const string& tr_data_file, const str
 		}
 	}
 	data.clear();
+	if(sw.size()>1)
+	{
+		in.open(sw.c_str());
+		while(!in.eof())
+		{
+			in>>tmp;
+			//cout<<tmp<<endl;
+			if(invmap.find(tmp)!=invmap.end())
+			{
+				stopwords.insert(invmap[tmp]);
+			}
+		}
+		in.close();
+	}
 	train();
 }
 
@@ -226,7 +246,7 @@ void NaiveBayesClassifier::evaluate(const string& fl)
 
 int main()
 {
-	NaiveBayesClassifier n("train.txt", "vocab.txt");
+	NaiveBayesClassifier n("train.txt", "vocab.txt",false,"shortswords.txt");
 	n.evaluate("test.txt");
 	return 0;
 }
