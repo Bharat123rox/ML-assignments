@@ -86,7 +86,7 @@ class NaiveBayesClassifier
 	\sa train(), predict(), evaluate()
 	 */
 
-	vector<instance> read_data(const string&,bool);
+	vector<instance> read_data(const string&);
 
 	/*!
 	\fn train()
@@ -108,18 +108,15 @@ class NaiveBayesClassifier
 
 	public:
 
-<<<<<<< HEAD
-	NaiveBayesClassifier(const string&, const string&, bool, const string&);
-=======
     /*!
      \fn NaiveBayesClassifier()
      \param tr_data_file The text file consisting of training documents from the dataset.
      \param vocab_file The vocabulary file consisting of all distinct words in the dataset. 
-     \param mode File mode(Reading/Writing)
+     \param mode (Non binary (false) or binary (true) Naive Bayes Algorithm)
      \sa read_data(), train(), predict(), evaluate()
      */
 
-	NaiveBayesClassifier(const string&, const string&, int);
+	NaiveBayesClassifier(const string&, const string&, bool, const string&);
 
 	/*!
 	\fn evaluate()
@@ -127,11 +124,10 @@ class NaiveBayesClassifier
 	\param fl Test dataset/Test documents file with which the algorithm's performance is tested. 
 	 */
 
->>>>>>> origin/master
 	void evaluate(const string&);
 };
 
-vector<NaiveBayesClassifier::instance> NaiveBayesClassifier::read_data(const string& fl, bool binarize = false)
+vector<NaiveBayesClassifier::instance> NaiveBayesClassifier::read_data(const string& fl)
 {
 	vector<instance> ret;
 	ifstream in;
@@ -150,12 +146,7 @@ vector<NaiveBayesClassifier::instance> NaiveBayesClassifier::read_data(const str
 			if(pos == string::npos) break;
 			int val = atoi(tmp.substr(0, pos).c_str());
 			int cnt = atoi(tmp.substr(pos + 1).c_str());
-<<<<<<< HEAD
 			inst.words[val] = (!mode) ? cnt : 1;
-=======
-			if(binarize) inst.words[val] = 1;
-			else inst.words[val] = cnt;
->>>>>>> origin/master
 		}
 		ret.push_back(inst);
 		if(tmp == "") break;
