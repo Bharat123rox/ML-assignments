@@ -1,0 +1,14 @@
+Naive Bayes Classifier
+----------------------
+Accuracy:  0.67408
+Precision: 0.696001
+Recall:    0.61816
+F-Score:   0.654775
+
+Binary Naive Bayes
+----------------------
+Accuracy:  0.66356
+Precision: 0.678699
+Recall:    0.6212
+F-Score:   0.648678
+
