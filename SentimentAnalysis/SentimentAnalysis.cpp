@@ -17,6 +17,8 @@ class NaiveBayesClassifier
 	vector<instance> p_data, n_data, tdata;
 	map<int, string> vocab;
 	map<int, int> p_wc, n_wc;
+	set<int> stopwords;
+	bool mode;
 
 	vector<instance> read_data(const string&);
 	void train();
@@ -24,7 +26,7 @@ class NaiveBayesClassifier
 
 	public:
 
-	NaiveBayesClassifier(const string&, const string&, int);
+	NaiveBayesClassifier(const string&, const string&, bool, const string&);
 	void evaluate(const string&);
 };
 
@@ -47,7 +49,7 @@ vector<NaiveBayesClassifier::instance> NaiveBayesClassifier::read_data(const str
 			if(pos == string::npos) break;
 			int val = atoi(tmp.substr(0, pos).c_str());
 			int cnt = atoi(tmp.substr(pos + 1).c_str());
-			inst.words[val] = cnt;
+			inst.words[val] = (!mode) ? cnt : 1;
 		}
 		ret.push_back(inst);
 		if(tmp == "") break;
@@ -61,22 +63,21 @@ void NaiveBayesClassifier::train()
 	n_prob = (1.0*n_data.size()) / (p_data.size() + n_data.size());
 	int tot_words = 0;
 	p_prior.resize(vocab.size(), 1.0);
-	for(auto inst : p_data) for(auto i : inst.words) tot_words += i.second;
-	for(int i = 0; i < vocab.size(); i++) 
-		if(p_wc.find(i) != p_wc.end()) p_prior[i] = (p_wc[i] + 1) / (1.0 * (tot_words + vocab.size()));	
+	for(auto inst : p_data) for(auto i : inst.words) if(stopwords.find(i.first) == stopwords.end()) tot_words += i.second;
+	for(int i = 0; i < vocab.size(); i++) if(stopwords.find(i) == stopwords.end()) p_prior[i] = (p_wc[i] + 1) / (1.0 * (tot_words + vocab.size()));	
 	tot_words = 0;
 	n_prior.resize(vocab.size(), 1.0);
-	for(auto inst : n_data) for(auto i : inst.words) tot_words += i.second;
-	for(int i = 0; i < vocab.size(); i++) 
-		if(n_wc.find(i) != n_wc.end()) n_prior[i] = (n_wc[i] + 1) / (1.0 * (tot_words + vocab.size()));
+	for(auto inst : n_data) for(auto i : inst.words) if(stopwords.find(i.first) == stopwords.end()) tot_words += i.second;
+	for(int i = 0; i < vocab.size(); i++) if(stopwords.find(i) == stopwords.end()) n_prior[i] = (n_wc[i] + 1) / (1.0 * (tot_words + vocab.size()));
 	return;
 }
 
-NaiveBayesClassifier::NaiveBayesClassifier(const string& tr_data_file, const string& vocab_file, int mode = 0)
+NaiveBayesClassifier::NaiveBayesClassifier(const string& tr_data_file, const string& vocab_file, bool mode = false, const string& sw = "")
 {
 	ifstream in; 
 	in.open(vocab_file.c_str());
 	string tmp;
+	this -> mode = mode;
 	int cur = 0;
 	while(in >> tmp) vocab[cur++] = tmp;
 	in.close();
@@ -98,10 +99,8 @@ NaiveBayesClassifier::NaiveBayesClassifier(const string& tr_data_file, const str
 pair<bool, bool> NaiveBayesClassifier::predict(const NaiveBayesClassifier::instance& inst)
 {
 	double pos = log(p_prob), neg = log(n_prob);
-	for(auto i : inst.words){
-		pos += i.second * log(p_prior[i.first]);
-	}
-	for(auto i : inst.words) neg += i.second * log(n_prior[i.first]);
+	for(auto i : inst.words) if(stopwords.find(i.first) == stopwords.end()) pos += i.second * log(p_prior[i.first]);
+	for(auto i : inst.words) if(stopwords.find(i.first) == stopwords.end()) neg += i.second * log(n_prior[i.first]);
 	return make_pair(pos >= neg, inst.sentiment);
 }
 
@@ -119,7 +118,7 @@ void NaiveBayesClassifier::evaluate(const string& fl)
 
 int main()
 {
-	NaiveBayesClassifier n("train.txt", "vocab.txt");
+	NaiveBayesClassifier n("train.txt", "vocab.txt",true);
 	n.evaluate("test.txt");
 	return 0;
 }
