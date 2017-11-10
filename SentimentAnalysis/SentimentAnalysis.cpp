@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+	#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -63,6 +63,10 @@ class NaiveBayesClassifier
 	 Represents all distinct set of words/vocabulary of the entire dataset.
 	 */
 	map<int, string> vocab;
+	/*!
+	\var invmap
+	Inverse mapping from a stopword to the index of the stopword, which is then marked as an invalid index.
+	*/ 
 	map<string,int> invmap;
 	/*!
 	 \var p_wc
@@ -75,7 +79,17 @@ class NaiveBayesClassifier
 	 \sa p_wc
 	 */
 	map<int, int> p_wc, n_wc;
+	/*!
+	\var stopwords
+	Set of all stopwords not to be considered by the Naive Bayes (or Binarized) Classifier
+	\sa mode
+	*/
 	set<int> stopwords;
+	/*!
+	\var mode
+	Mode which decides whether to implement Naive Bayes Classifier in binarized or non-binarized mode.
+	\sa stopwords
+	*/
 	bool mode;
 
 	/*!
@@ -113,6 +127,7 @@ class NaiveBayesClassifier
      \param tr_data_file The text file consisting of training documents from the dataset.
      \param vocab_file The vocabulary file consisting of all distinct words in the dataset. 
      \param mode (If false, Non-Binary or if true, Binary Naive Bayes Algorithm)
+     \param sw File consisting of stopwords.
      \sa read_data(), train(), predict(), evaluate()
      */
 
@@ -201,7 +216,6 @@ NaiveBayesClassifier::NaiveBayesClassifier(const string& tr_data_file, const str
 		while(!in.eof())
 		{
 			in>>tmp;
-			//cout<<tmp<<endl;
 			if(invmap.find(tmp)!=invmap.end())
 			{
 				stopwords.insert(invmap[tmp]);

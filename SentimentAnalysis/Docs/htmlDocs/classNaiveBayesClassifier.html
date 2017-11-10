@@ -121,16 +121,21 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a3bb9909e0c3f38426c0e03a4569ca516"><td class="memItemLeft" align="right" valign="top">map&lt; int, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNaiveBayesClassifier.html#a3bb9909e0c3f38426c0e03a4569ca516">vocab</a></td></tr>
 <tr class="memdesc:a3bb9909e0c3f38426c0e03a4569ca516"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents all distinct set of words/vocabulary of the entire dataset.  <a href="#a3bb9909e0c3f38426c0e03a4569ca516">More...</a><br /></td></tr>
 <tr class="separator:a3bb9909e0c3f38426c0e03a4569ca516"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cdd16e32e18b2606d51e7695d96d80a"><td class="memItemLeft" align="right" valign="top">map&lt; string, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNaiveBayesClassifier.html#a7cdd16e32e18b2606d51e7695d96d80a">invmap</a></td></tr>
+<tr class="memdesc:a7cdd16e32e18b2606d51e7695d96d80a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse mapping from a stopword to the index of the stopword, which is then marked as an invalid index.  <a href="#a7cdd16e32e18b2606d51e7695d96d80a">More...</a><br /></td></tr>
+<tr class="separator:a7cdd16e32e18b2606d51e7695d96d80a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ab2120216ebe1310e77b5ded920ab70"><td class="memItemLeft" align="right" valign="top">map&lt; int, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNaiveBayesClassifier.html#a8ab2120216ebe1310e77b5ded920ab70">p_wc</a></td></tr>
 <tr class="memdesc:a8ab2120216ebe1310e77b5ded920ab70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wordcount of positive words whose probabilities express positive sentiment in the document.  <a href="#a8ab2120216ebe1310e77b5ded920ab70">More...</a><br /></td></tr>
 <tr class="separator:a8ab2120216ebe1310e77b5ded920ab70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6692084e2a58054f46ffe360b01e0eb4"><td class="memItemLeft" align="right" valign="top">map&lt; int, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNaiveBayesClassifier.html#a6692084e2a58054f46ffe360b01e0eb4">n_wc</a></td></tr>
 <tr class="memdesc:a6692084e2a58054f46ffe360b01e0eb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wordcount of positive words whose probabilities express negative sentiment in the document.  <a href="#a6692084e2a58054f46ffe360b01e0eb4">More...</a><br /></td></tr>
 <tr class="separator:a6692084e2a58054f46ffe360b01e0eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09793429f32afccf8ee51d19815b0d6d"><td class="memItemLeft" align="right" valign="top">set&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNaiveBayesClassifier.html#a09793429f32afccf8ee51d19815b0d6d">stopwords</a></td></tr>
-<tr class="separator:a09793429f32afccf8ee51d19815b0d6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a703ea5989dcb260b4391fe083f94b1c8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNaiveBayesClassifier.html#a703ea5989dcb260b4391fe083f94b1c8">mode</a></td></tr>
-<tr class="separator:a703ea5989dcb260b4391fe083f94b1c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4b7efc6b2cd76007722ee3f0a9165d4"><td class="memItemLeft" align="right" valign="top">set&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNaiveBayesClassifier.html#ab4b7efc6b2cd76007722ee3f0a9165d4">stopwords</a></td></tr>
+<tr class="memdesc:ab4b7efc6b2cd76007722ee3f0a9165d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set of all stopwords not to be considered by the Naive Bayes (or Binarized) Classifier.  <a href="#ab4b7efc6b2cd76007722ee3f0a9165d4">More...</a><br /></td></tr>
+<tr class="separator:ab4b7efc6b2cd76007722ee3f0a9165d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8756d765d463544c7078cbcd59a3c5e8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNaiveBayesClassifier.html#a8756d765d463544c7078cbcd59a3c5e8">mode</a></td></tr>
+<tr class="memdesc:a8756d765d463544c7078cbcd59a3c5e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mode which decides whether to implement Naive Bayes Classifier in binarized or non-binarized mode.  <a href="#a8756d765d463544c7078cbcd59a3c5e8">More...</a><br /></td></tr>
+<tr class="separator:a8756d765d463544c7078cbcd59a3c5e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents the implementation of a Naive Bayes Classifier template/blueprint. </p>
@@ -178,6 +183,7 @@ Private Attributes</h2></td></tr>
     <tr><td class="paramname">tr_data_file</td><td>The text file consisting of training documents from the dataset. </td></tr>
     <tr><td class="paramname">vocab_file</td><td>The vocabulary file consisting of all distinct words in the dataset. </td></tr>
     <tr><td class="paramname">mode</td><td>(If false, Non-Binary or if true, Binary Naive Bayes Algorithm) </td></tr>
+    <tr><td class="paramname">sw</td><td>File consisting of stopwords. </td></tr>
   </table>
   </dd>
 </dl>
@@ -313,8 +319,8 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a703ea5989dcb260b4391fe083f94b1c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a703ea5989dcb260b4391fe083f94b1c8">&#9670;&nbsp;</a></span>mode</h2>
+<a id="a7cdd16e32e18b2606d51e7695d96d80a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cdd16e32e18b2606d51e7695d96d80a">&#9670;&nbsp;</a></span>invmap</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -323,7 +329,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool NaiveBayesClassifier::mode</td>
+          <td class="memname">NaiveBayesClassifier::invmap</td>
         </tr>
       </table>
   </td>
@@ -332,6 +338,33 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Inverse mapping from a stopword to the index of the stopword, which is then marked as an invalid index. </p>
+
+</div>
+</div>
+<a id="a8756d765d463544c7078cbcd59a3c5e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8756d765d463544c7078cbcd59a3c5e8">&#9670;&nbsp;</a></span>mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">NaiveBayesClassifier::mode</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Mode which decides whether to implement Naive Bayes Classifier in binarized or non-binarized mode. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classNaiveBayesClassifier.html#ab4b7efc6b2cd76007722ee3f0a9165d4" title="Set of all stopwords not to be considered by the Naive Bayes (or Binarized) Classifier. ">stopwords</a> </dd></dl>
 
 </div>
 </div>
@@ -529,8 +562,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a09793429f32afccf8ee51d19815b0d6d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a09793429f32afccf8ee51d19815b0d6d">&#9670;&nbsp;</a></span>stopwords</h2>
+<a id="ab4b7efc6b2cd76007722ee3f0a9165d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4b7efc6b2cd76007722ee3f0a9165d4">&#9670;&nbsp;</a></span>stopwords</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -539,7 +572,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">set&lt;int&gt; NaiveBayesClassifier::stopwords</td>
+          <td class="memname">NaiveBayesClassifier::stopwords</td>
         </tr>
       </table>
   </td>
@@ -548,6 +581,9 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Set of all stopwords not to be considered by the Naive Bayes (or Binarized) Classifier. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classNaiveBayesClassifier.html#a8756d765d463544c7078cbcd59a3c5e8" title="Mode which decides whether to implement Naive Bayes Classifier in binarized or non-binarized mode...">mode</a> </dd></dl>
 
 </div>
 </div>

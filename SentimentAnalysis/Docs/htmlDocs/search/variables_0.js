@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mode',['mode',['../classNaiveBayesClassifier.html#a703ea5989dcb260b4391fe083f94b1c8',1,'NaiveBayesClassifier']]]
+  ['invmap',['invmap',['../classNaiveBayesClassifier.html#a7cdd16e32e18b2606d51e7695d96d80a',1,'NaiveBayesClassifier']]]
 ];
