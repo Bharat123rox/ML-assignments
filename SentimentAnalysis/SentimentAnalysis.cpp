@@ -303,7 +303,6 @@ void NaiveBayesClassifier::getStats(const string& accfile, const string& timefil
 	ofil2.open(accfile.c_str());
 	while(low<=high)
 	{
-		cout<<"Idhar: "<<low<<endl;
 		vector<instance> temp = trdata;
 		random_shuffle(temp.begin(),temp.end());
 		temp.resize(low);
@@ -329,7 +328,7 @@ pair<bool, bool> NaiveBayesClassifier::predict(const NaiveBayesClassifier::insta
 	return make_pair(pos >= neg, inst.sentiment);
 }
 
-double NaiveBayesClassifier::evaluate(const string& fl, bool printa=false)
+double NaiveBayesClassifier::evaluate(const string& fl, bool printa=true)
 {
 	auto data = read_data(fl);
 	int tot = 0,tp = 0,tn = 0,fn = 0,fp = 0;
@@ -346,21 +345,31 @@ double NaiveBayesClassifier::evaluate(const string& fl, bool printa=false)
 		}
 	}
 	double precision = (1.0*tp)/(tp+fp), recall = (1.0*tp)/(tp+fn);
+	double neg_precision = (1.0*tn)/(tn+fn), neg_recall = (1.0*tn)/(tn+fp);
 	double accuracy = (1.000*tot)/data.size();
 	if(printa)
 	{
 		cout<< "Accuracy: " << accuracy <<endl;
-		cout<< "Precision: " << precision <<endl;
-		cout<< "Recall: " << recall <<endl;
+		cout<< "Positive Precision: " << precision <<endl;
+		cout<< "Positive Recall: " << recall <<endl;
 		cout<< "F-Score: " << (2.0*precision*recall)/(precision+recall) <<endl;
+		cout<< "Negative Precision: " << neg_precision <<endl;
+		cout<< "Negative Recall: " << neg_recall <<endl;
+		cout<< "F-Score: " << (2.0*neg_precision*neg_recall)/(neg_precision+neg_recall) <<endl;
+		cout<<"\n********************************\n\n";
 	}
 	return accuracy;
 }
 
 int main()
 {
-	NaiveBayesClassifier n("train.txt", "vocab.txt",false,"shortswords.txt");
-	n.evaluate("test.txt",true);
-	n.getStats("acc.txt","time.txt","train.txt");
+	auto sw = {"", "shortswords.txt", "longswords.txt"};
+	for(auto str: sw){
+		NaiveBayesClassifier n1("train.txt", "vocab.txt",false,str);
+		n1.evaluate("test.txt");
+		NaiveBayesClassifier n2("train.txt", "vocab.txt",true, str);
+		n2.evaluate("test.txt");
+	}
+
 	return 0;
 }
