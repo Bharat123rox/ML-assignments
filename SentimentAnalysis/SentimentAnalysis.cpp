@@ -1,4 +1,4 @@
-	#include <bits/stdc++.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -100,15 +100,7 @@ class NaiveBayesClassifier
 	\sa train(), predict(), evaluate()
 	 */
 
-	vector<instance> read_data(const string&);
-
-	/*!
-	\fn train()
-	\brief Trains the Naive Bayes Classifier by calculating prior probabilities with the help of a given training text file.
-	\sa read_data(), predict(), evaluate()
-	 */
-
-	void train();	
+	vector<instance> read_data(const string&);	
 
 	/*!
 	\fn predict()
@@ -119,6 +111,14 @@ class NaiveBayesClassifier
 	 */
 
 	pair<bool, bool> predict(const instance&);
+
+	/*!
+	\fn train()
+	\brief Trains the Naive Bayes Classifier by calculating prior probabilities with the help of a given training text file.
+	\sa read_data(), predict(), evaluate()
+	 */
+
+	void train();
 
 	public:
 
@@ -132,6 +132,7 @@ class NaiveBayesClassifier
      */
 
 	NaiveBayesClassifier(const string&, const string&, bool, const string&);
+	NaiveBayesClassifier(NaiveBayesClassifier*, vector<instance>&, bool);
 
 	/*!
 	\fn evaluate()
@@ -139,7 +140,9 @@ class NaiveBayesClassifier
 	\param fl Test dataset/Test documents file with which the algorithm's performance is tested. 
 	 */
 
-	void evaluate(const string&);
+	double evaluate(const string&, bool);
+
+	void getStats(const string&, const string&, const string& );
 };
 
 vector<NaiveBayesClassifier::instance> NaiveBayesClassifier::read_data(const string& fl)
@@ -226,6 +229,76 @@ NaiveBayesClassifier::NaiveBayesClassifier(const string& tr_data_file, const str
 	train();
 }
 
+NaiveBayesClassifier::NaiveBayesClassifier(NaiveBayesClassifier* par, vector<instance>& data, bool mode = false)
+{
+	this->vocab = par->vocab;
+	this->invmap = par->invmap;
+	this->mode = mode;
+	for(auto inst : data)
+	{
+		if(inst.sentiment)
+		{
+			p_data.push_back(inst);
+			for(auto i : inst.words) 
+			{
+				if(this->mode==false)
+				{	
+					p_wc[i.first] += i.second;
+				}
+				else
+				{
+					p_wc[i.first]+=1;
+				}
+			}
+		}
+		else{
+			n_data.push_back(inst);
+			for(auto i : inst.words) 
+			{
+				if(this->mode==false)
+				{
+					n_wc[i.first] += i.second;
+				}
+				else
+				{
+					n_wc[i.first]+=1;
+				}
+			}
+		}
+	}
+	this->stopwords = par->stopwords;
+	train();
+}
+
+void NaiveBayesClassifier::getStats(const string& accfile, const string& timefile, const string& tr_data_file)
+{
+	vector<instance> trdata = read_data(tr_data_file.c_str());
+	int low = 500;
+	int high = 10000;
+	int diff = 3000;
+	ofstream ofil1,ofil2;
+	ofil1.open(timefile.c_str());
+	ofil2.open(accfile.c_str());
+	while(low<=high)
+	{
+		cout<<"Idhar: "<<low<<endl;
+		vector<instance> temp = trdata;
+		random_shuffle(temp.begin(),temp.end());
+		temp.resize(low);
+		clock_t t1 = clock();
+		NaiveBayesClassifier n1(this,temp);
+		double acc1 = n1.evaluate("test.txt",false);
+		clock_t t2 = clock();
+		NaiveBayesClassifier n2(this,temp,true);
+		double acc2 = n2.evaluate("test.txt",false);
+		ofil1<<low<<", "<<t2-t1<<endl;
+		ofil2<<low<<", "<<acc1<<", "<<acc2<<endl;
+		low+=diff;
+	}
+	ofil1.close();
+	ofil2.close();
+}
+
 pair<bool, bool> NaiveBayesClassifier::predict(const NaiveBayesClassifier::instance& inst)
 {
 	double pos = log(p_prob), neg = log(n_prob);
@@ -234,7 +307,7 @@ pair<bool, bool> NaiveBayesClassifier::predict(const NaiveBayesClassifier::insta
 	return make_pair(pos >= neg, inst.sentiment);
 }
 
-void NaiveBayesClassifier::evaluate(const string& fl)
+double NaiveBayesClassifier::evaluate(const string& fl, bool printa=false)
 {
 	auto data = read_data(fl);
 	int tot = 0,tp = 0,tn = 0,fn = 0,fp = 0;
@@ -251,16 +324,21 @@ void NaiveBayesClassifier::evaluate(const string& fl)
 		}
 	}
 	double precision = (1.0*tp)/(tp+fp), recall = (1.0*tp)/(tp+fn);
-	cout<< "Accuracy: " << (1.0*tot)/data.size() <<endl;
-	cout<< "Precision: " << precision <<endl;
-	cout<< "Recall: " << recall <<endl;
-	cout<< "F-Score: " << (2.0*precision*recall)/(precision+recall) <<endl;
-	return;
+	double accuracy = (1.000*tot)/data.size();
+	if(printa)
+	{
+		cout<< "Accuracy: " << accuracy <<endl;
+		cout<< "Precision: " << precision <<endl;
+		cout<< "Recall: " << recall <<endl;
+		cout<< "F-Score: " << (2.0*precision*recall)/(precision+recall) <<endl;
+	}
+	return accuracy;
 }
 
 int main()
 {
 	NaiveBayesClassifier n("train.txt", "vocab.txt",false,"shortswords.txt");
-	n.evaluate("test.txt");
+	n.evaluate("test.txt",true);
+	n.getStats("acc.txt","time.txt","train.txt");
 	return 0;
 }
