@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['main',['main',['../SentimentAnalysis_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4',1,'SentimentAnalysis.cpp']]]
+  ['getstats',['getStats',['../classNaiveBayesClassifier.html#ac87abfa0de63691b944fe51b99af551e',1,'NaiveBayesClassifier']]]
 ];

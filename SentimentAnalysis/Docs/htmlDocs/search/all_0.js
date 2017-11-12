@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['evaluate',['evaluate',['../classNaiveBayesClassifier.html#a133873454cbc90ab20a133a8ef482ec3',1,'NaiveBayesClassifier']]]
+  ['evaluate',['evaluate',['../classNaiveBayesClassifier.html#a1b7ce414369a04d12e915a42d15457a5',1,'NaiveBayesClassifier']]]
 ];

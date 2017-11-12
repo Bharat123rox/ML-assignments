@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['instance',['instance',['../structNaiveBayesClassifier_1_1instance.html',1,'NaiveBayesClassifier']]],
-  ['invmap',['invmap',['../classNaiveBayesClassifier.html#a7cdd16e32e18b2606d51e7695d96d80a',1,'NaiveBayesClassifier']]]
+  ['getstats',['getStats',['../classNaiveBayesClassifier.html#ac87abfa0de63691b944fe51b99af551e',1,'NaiveBayesClassifier']]]
 ];

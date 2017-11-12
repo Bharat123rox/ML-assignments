@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+include <bits/stdc++.h>
 
 using namespace std;
 
@@ -97,7 +97,7 @@ class NaiveBayesClassifier
 	\brief Takes in a text file as input, parses it and converts it into a \'bag-of-words\' form.
 	\param fl The input text file
 	\return The instance as a bag-of-words converted from the document.
-	\sa train(), predict(), evaluate()
+	\sa train(), predict(), evaluate(), getStats()
 	 */
 
 	vector<instance> read_data(const string&);	
@@ -107,7 +107,7 @@ class NaiveBayesClassifier
 	\brief Tries to predict the sentiment of a document given a test document or test instance.
 	\param inst A bag-of-words instance generated from a document for testing.
 	\return A tuple of the form (Predicted Sentiment, Actual Sentiment)
-	\sa train(), read_data(), evaluate()
+	\sa train(), read_data(), evaluate(), getStats()
 	 */
 
 	pair<bool, bool> predict(const instance&);
@@ -115,7 +115,7 @@ class NaiveBayesClassifier
 	/*!
 	\fn train()
 	\brief Trains the Naive Bayes Classifier by calculating prior probabilities with the help of a given training text file.
-	\sa read_data(), predict(), evaluate()
+	\sa read_data(), predict(), evaluate(), getStats()
 	 */
 
 	void train();
@@ -124,6 +124,7 @@ class NaiveBayesClassifier
 
     /*!
      \fn NaiveBayesClassifier()
+     Constructor for the Naive Bayes Classifier.
      \param tr_data_file The text file consisting of training documents from the dataset.
      \param vocab_file The vocabulary file consisting of all distinct words in the dataset. 
      \param mode (If false, Non-Binary or if true, Binary Naive Bayes Algorithm)
@@ -132,15 +133,36 @@ class NaiveBayesClassifier
      */
 
 	NaiveBayesClassifier(const string&, const string&, bool, const string&);
+
+	/*!
+     \fn NaiveBayesClassifier()
+     \param tr_data_file The text file consisting of training documents from the dataset.
+     \param vocab_file The vocabulary file consisting of all distinct words in the dataset. 
+     \param mode (If false, Non-Binary or if true, Binary Naive Bayes Algorithm)
+     \param sw File consisting of stopwords.
+     \sa read_data(), train(), predict(), evaluate(), getStats()
+     */
 	NaiveBayesClassifier(NaiveBayesClassifier*, vector<instance>&, bool);
 
 	/*!
 	\fn evaluate()
 	\brief Evaluates the performance of the NaiveBayesClassifier by F-Score and Accuracy metrics.
-	\param fl Test dataset/Test documents file with which the algorithm's performance is tested. 
+	\param par The parent constructor.
+	\param data The bag-of-words data
+	\param mode False if Non-Binary, True if Binary Naive Bayes Classifier
+	\sa read_data(), train(), predict(), getStats()
 	 */
 
 	double evaluate(const string&, bool);
+
+	/*!
+	\fn getStats()
+	\brief Fetches statistics such as running time and accuracy of the program.
+	\param acc_file The file in which accuracy for various sizes of the training set is stored.
+	\param time_file The file in which time taken to run the program for various input sizes is stored.
+	\param tr_data_file Text file with training documents from the dataset.
+	\sa read_data(), train(), predict(), evaluate()
+	 */
 
 	void getStats(const string&, const string&, const string& );
 };

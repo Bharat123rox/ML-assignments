@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['tdata',['tdata',['../classNaiveBayesClassifier.html#aa23d4ed050661b013d2a11b4385a1c3a',1,'NaiveBayesClassifier']]],
-  ['train',['train',['../classNaiveBayesClassifier.html#a6d79b7b59192dc995c29eb4974b04330',1,'NaiveBayesClassifier']]]
+  ['sentiment',['sentiment',['../structNaiveBayesClassifier_1_1instance.html#aea599b924f63894d117df3b7cd0ee146',1,'NaiveBayesClassifier::instance']]],
+  ['sentimentanalysis_2ecpp',['SentimentAnalysis.cpp',['../SentimentAnalysis_8cpp.html',1,'']]],
+  ['stopwords',['stopwords',['../classNaiveBayesClassifier.html#ab4b7efc6b2cd76007722ee3f0a9165d4',1,'NaiveBayesClassifier']]]
 ];

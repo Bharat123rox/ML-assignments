@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['naivebayesclassifier',['NaiveBayesClassifier',['../classNaiveBayesClassifier.html#aae9022d29ef8256c1bae22cfe7ba5622',1,'NaiveBayesClassifier']]]
+  ['main',['main',['../SentimentAnalysis_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4',1,'SentimentAnalysis.cpp']]]
 ];
